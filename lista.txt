@@ -1,0 +1,140 @@
+lista de exercícios
+
+prof. joão b. oliveira
+
+1. algoritmos gulosos
+
+escreva um algoritmo que resolve o problema de achar o menor número de moedas para dar troco, em um país que tem moedas de 17, 8 e 1 centavos, e depois confirme que ele funciona corretamente para todos os centavos entre 1 e 100. "funcionar" significa dar o troco correto e com o menor número de moedas.
+
+explique por que o algoritmo de ordenação selectionsort é um algoritmo guloso.
+
+um novo algoritmo para encontrar árvores de cobertura mínima em um grafo g é assim:
+(a) inicie em algum nodo u de g;
+(b) siga a aresta de valor mais baixo ligada a u e que leva a um nodo ainda não visitado;
+(c) repita o passo anterior até visitar todos os nodos de g.
+agora responda:
+(a) ele é guloso?
+(b) ele acha uma árvore de cobertura mínima?
+
+você tem uma série de atividades bem legais que podem ser realizadas no sábado, mas todas têm hora marcada para início e fim. você gostaria de escolher o máximo de atividades possíveis para fazer, já sabendo que, quando iniciar uma delas, terá que ir até o final sem mudar para outra. você pensa em dois algoritmos para escolher o máximo de atividades:
+(a) escolher as atividades dando preferência para as mais curtas (porque ocupam o mínimo de tempo);
+(b) escolher as atividades dando preferência para as que terminam o mais cedo possível.
+teste os dois algoritmos com as atividades abaixo:
+
+atividade	início	fim
+1	2	4
+2	1	4
+3	2	7
+4	4	8
+5	4	9
+6	6	8
+7	5	10
+8	7	9
+9	7	10
+10	8	11
+
+
+apresente um algoritmo guloso e de tempo o(n) que opera sobre uma lista de inteiros [a1,a2,...,an] e encontra o local onde a soma dos números de um lado da sequência é igual à soma do outro lado (ou o mais parecida possível). regra extra: cada elemento da lista pode ser acessado somente uma vez.
+
+uma coloração de um grafo não dirigido é a atribuição de cores aos nodos de forma que nenhum par de nodos vizinhos tenha a mesma cor. no problema de coloração de grafos, desejamos encontrar o número mínimo de cores necessárias para colorir um grafo não dirigido. proponha um algoritmo guloso para resolver o problema e comprove que ele sempre funciona (se você conseguir provar que sempre funciona pode ganhar um milhão de dólares).
+
+2. divisão e conquista
+
+implemente pesquisa binária sobre um vetor de inteiros.
+
+teste sua pesquisa binária:
+(a) crie um vetor de 20 inteiros inicializado com (0,1,2,...,19);
+(b) para cada um dos 20 elementos, teste sua pesquisa binária para ver se ela encontra o elemento corretamente.
+
+modifique sua pesquisa binária para que ela seja ternária e teste de novo.
+
+implemente mergesort, dividindo o vetor em duas partes (mergesort convencional).
+
+modifique seu mergesort para dividir o vetor em três partes.
+
+implemente o algoritmo dos camponeses russos para multiplicação de inteiros.
+
+altere o algoritmo dos camponeses russos para que ele não faça mais multiplicação e divisão por 2, pois agora os camponeses querem que a multiplicação e a divisão sejam feitas com 5. teste seu algoritmo para confirmar que funciona.
+
+escreva um programa que faz uma lista de todos os subconjuntos de elementos de um conjunto s.
+
+dado um array já ordenado de inteiros diferentes a[0..n], determine se existe um índice i tal que a[i]=i. forneça um algoritmo de divisão e conquista que resolva o problema em tempo o(log n).
+
+escreva um programa que recebe um conjunto s e um inteiro k e verifica se algum subconjunto de s tem soma igual a k.
+
+suponha que você esteja escolhendo entre os seguintes três algoritmos:
+(a) algoritmo a resolve problemas dividindo-os em cinco subproblemas de metade do tamanho, resolvendo recursivamente cada subproblema e, em seguida, combinando as soluções em tempo linear.
+(b) algoritmo b resolve problemas de tamanho n resolvendo recursivamente dois subproblemas de tamanho n-1 e depois combinando as soluções em tempo constante.
+(c) algoritmo c resolve problemas de tamanho n dividindo-os em nove subproblemas de tamanho n/3, resolvendo recursivamente cada subproblema e, em seguida, combinando as soluções em tempo linear.
+quais são os tempos de execução de cada um desses algoritmos (notação big-o) e qual você escolheria?
+
+escreva um programa que escreve todas as permutações de elementos que estão em um conjunto s.
+
+3. programação dinâmica
+
+implemente um algoritmo para calcular os números de fibonacci que use memória o(1).
+
+você pode construir uma calçada da sua casa até a casa da vovó usando pedras verdes, azuis e amarelas. as pedras são quadradas, têm 1 m × 1 m, e a casa da vovó fica a 50 metros de distância. antes de comprar as pedras, responda:
+(a) quantas calçadas com coloridos diferentes são possíveis?
+(b) quantas são possíveis se a vovó não quer duas pedras amarelas lado a lado?
+(c) ... e se a vovó também não deixa que duas pedras azuis fiquem lado a lado?
+dica: tente uma recorrência simples e, se necessário, uma versão com memorização.
+
+você achou esta fórmula em um baú no sótão da vovó:
+
+zn = { 3,                         se n=0
+       4,                         se n=1
+       5,                         se n=2
+       zn-1 - 2*zn-2 + 3*zn-3,    se n>2 }
+
+agora:
+(a) implemente o cálculo de zn usando recursão e calcule z40.
+(b) depois, implemente o cálculo sem recursão, usando um vetor de valores auxiliares.
+(c) em seguida, elimine o vetor e use apenas um punhado de variáveis.
+
+o algoritmo abaixo calcula recursivamente alguma coisa interessante:
+
+int coisa(int n, int k) {
+    if (k == n) return n;
+    if (k == 0) return 1;
+    return coisa(n-1, k-1) - 3 * coisa(n-1, k);
+}
+
+sabe-se que ele sempre será chamado com k≤n. faça uma versão não recursiva usando uma tabela auxiliar.
+
+depois de um tempo você acha uma anotação no caderno da vovó:
+
+"depois de décadas de tentativas, finalmente consegui descobrir o cálculo correto de zn. eram necessárias duas variáveis o tempo todo! finalmente posso escrever a fórmula correta!! ela é"
+
+zn,k = { n,                              se k=0
+         3,                              se n=0
+         4,                              se n=1
+         5,                              se n=2
+         zn-1,k - 2*zn-2,k-1 + 3*zn-3,k-2,    se n>2 }
+
+com isso, refaça suas implementações para completar os cálculos que a vovó sempre desejou fazer.
+
+
+4. backtracking
+
+escreva um algoritmo baseado em backtracking que recebe um inteiro n e produz uma sequência contendo todos os inteiros de 1 a n, com a condição de que a soma de um inteiro com o seguinte na sequência seja sempre um quadrado perfeito. por exemplo, para n=15 o algoritmo pode produzir:
+
+8 1 15 10 6 3 13 12 4 5 11 14 2 7 9
+
+escreva um algoritmo que resolva o problema das 4 rainhas usando backtracking. altere-o para resolver o problema para um n arbitrário de rainhas.
+
+adapte o algoritmo do item anterior para resolver o passeio do cavalo no xadrez. veja a descrição em:
+http://en.wikipedia.org/wiki/knight%27s_tour
+
+5. algoritmos genéticos
+
+você tem vários pontos que pertencem a uma função desconhecida f(x): (x1,y1), (x2,y2), ..., (xn,yn). como f(x) é desconhecida, você decide imitá-la por um polinômio p(x) = ax³ + bx² + cx + d e precisa achar a,b,c,d que façam p(x) passar perto dos pontos dados. para isso, use a função
+
+d(p()) = ∑i |p(xi) - yi|
+
+que parece uma boa escolha; ela deve ser minimizada. agora cumpra:
+(a) escreva um programa que crie uma população de n polinômios, cada um com seus valores de a,b,c,d;
+(b) implemente a função d() para medir a qualidade de cada polinômio;
+(c) implemente uma estratégia de evolução para criar novos polinômios;
+(d) faça a população evoluir para polinômios cada vez melhores para imitar os pontos dados;
+(e) se não ficar satisfeito, mude para um polinômio de grau maior ou para outra família de funções mais adequada.
