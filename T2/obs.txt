@@ -1,0 +1,62 @@
+a seção “Letters, numbers, punctuation, prosigns for Morse code and non-Latin variants” do artigo da Wikipédia e, pelo que o enunciado pede (usar a tabela do link e aceitar símbolos separados por . e -, com ∪ como quebra entre símbolos), o conjunto de códigos que vamos utilizar é o ITU International Morse para:
+
+Letras A–Z
+
+Dígitos 0–9
+
+Pontuação comum do quadro da Wikipédia
+
+Prosigns (sinais operacionais) mais usados
+
+Abaixo está o mapeamento exato em “pontos e traços” (formato . e -):
+
+Letras
+
+A .- B -... C -.-. D -.. E . F ..-. G --. H ....
+I .. J .--- K -.- L .-.. M -- N -. O ---
+P .--. Q --.- R .-. S ... T - U ..- V ...-
+W .-- X -..- Y -.-- Z --..
+
+Números
+
+0 ----- 1 .---- 2 ..--- 3 ...-- 4 ....-
+5 ..... 6 -.... 7 --... 8 ---.. 9 ----.
+
+Pontuação (da tabela do artigo)
+
+. (ponto) .-.-.- , (vírgula) --..-- ? ..--.. ' (apóstrofo) .----.
+! (exclamação) -.-.-- (há um alternativo ---.- no artigo)
+/ -..-. ( -.--. ) -.--.- & .-...
+: ---... ; -.-.-. = (travessão duplo/BT) -...- + (RN) .-.-.
+- (hífen) -....- _ (sublinha) ..--.- " .-..-.
+$ ...-..- @ .--.-.
+
+Prosigns (sinais operacionais)
+
+K (convite geral p/ transmitir) -.-
+
+CT (início de transmissão / “KA”) -.-.-
+
+RN (próxima mensagem/“page separator”) .-.-.
+
+SK (fim de trabalho / “VA”) ...-.-
+
+HH (erro) ........
+
+Verified (também letra Ŝ) ...-.
+
+AS (aguarde; também proposto p/ &) .-...
+
+Não incluí os caracteres não-latinos do quadro (À, Ä, CH, etc.) porque o enunciado fala em usar a tabela “até onde interessa ao problema” e a mensagem-exemplo usa apenas alfabeto básico/pontuação. Se você quiser que também aceitemos esses caracteres estendidos, eu acrescento a lista completa.
+
+Observações alinhadas ao enunciado:
+
+Os três símbolos da entrada serão ., - e ∪.
+
+∪ marca fronteira obrigatória entre símbolos; onde não houver ∪, os pontos/traços podem estar “grudados” e devem ser segmentados em símbolos válidos desta tabela.
+
+A contagem de mensagens possíveis deve usar todos os pontos/traços e respeitar as quebras ∪ como separadores de símbolos.
+
+(Fontes: tabela ITU na seção “Letters, numbers, punctuation, prosigns…” do artigo Morse code na Wikipédia; códigos e prosigns conforme lá descritos. 
+en.wikipedia.org
+)

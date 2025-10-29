@@ -1,0 +1,38 @@
+O código confuso
+
+Você pode ficar surpreso ao saber que uma mensagem enviada em código Morse pode ser decodificada de várias maneiras. 
+Por exemplo, a mensagem
+
+.- ..∪- .-.-.-∪.. ..−∪.. ..∪..−.-
+
+poderia ser decodificada como 383408 mensagens diferentes, todas válidas. Apenas o início dela (“.-..-”) 
+pode ser decodificado de 4 formas diferentes: ea, eet, it e apenas u.
+O problema da decodificação não tem solução algorítmica, ela deve ser feita de acordo com o contexto da mensagem, do idioma 
+sendo usado e de acordo com a experiência dos operadores¹.
+
+Seu trabalho é usar a tabela de código Morse dada em https://en.wikipedia.org/wiki/Morse_code#Mnemonics
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
