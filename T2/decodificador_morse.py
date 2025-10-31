@@ -13,41 +13,26 @@ codigos = {
 }
 
 def normalizar(texto: str) -> str:
-    s = texto.strip()
-    s = s.replace("−", "-").replace("–", "-").replace("—", "-")
-    
-    tem_separador_explicito = "∪" in s
-    
-    if tem_separador_explicito:
-        s = "".join(s.split())
-    else:
+    s = texto.strip().replace("−", "-").replace("–", "-").replace("—", "-")
+    if "∪" not in s:
         s = s.replace(" ", "∪")
-        s = "".join(s.split())
-    
-    s = s.replace("u", "∪").replace("U", "∪")
-    
+    s = "".join(s.split()).replace("u", "∪").replace("U", "∪")
     while "∪∪" in s:
         s = s.replace("∪∪", "∪")
-
-    s = "".join(ch for ch in s if ch in ".-∪")
-    return s
+    return "".join(ch for ch in s if ch in ".-∪")
 
 def contar_modos_bloco(bloco: str) -> int:
     por_comprimento = {}
     for codigo in codigos.values():
-        L = len(codigo)
-        por_comprimento.setdefault(L, []).append(codigo)
-    
+        por_comprimento.setdefault(len(codigo), []).append(codigo)
     comprimentos = sorted(por_comprimento.keys())
-    n = len(bloco)
-    memo = {}
-
+    n, memo = len(bloco), {}
+    
     def backtrack(i):
         if i == n:
             return 1
         if i in memo:
             return memo[i]
-        
         total = 0
         for L in comprimentos:
             if L > n - i:
@@ -55,10 +40,8 @@ def contar_modos_bloco(bloco: str) -> int:
             for codigo in por_comprimento[L]:
                 if bloco.startswith(codigo, i):
                     total += backtrack(i + L)
-        
         memo[i] = total
         return total
-
     return backtrack(0)
 
 def contar_mensagens(mensagem: str) -> int:
@@ -68,23 +51,13 @@ def contar_mensagens(mensagem: str) -> int:
     blocos = s.split("∪")
     total = 1
     for bloco in blocos:
-        if not bloco:          
-            return 0
-        total *= contar_modos_bloco(bloco)
-        if total == 0:
+        if not bloco or not (total := total * contar_modos_bloco(bloco)):
             return 0
     return total
 
 def main():
-    try:
-        mensagem = input()
-    except:
-        mensagem = ""
-    
-    if not mensagem:
-        print("forneca a mensagem em morse")
-    else:
-        print(contar_mensagens(mensagem))
+    mensagem = input().strip()
+    print(contar_mensagens(mensagem) if mensagem else "forneca a mensagem em morse")
 
 if __name__ == "__main__":
     main()
