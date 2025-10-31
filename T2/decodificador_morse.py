@@ -18,7 +18,6 @@ def normalizar(texto: str) -> str:
     while "∪∪" in s: 
         s = s.replace("∪∪", "∪") 
     return "".join(c for c in s if c in ".-∪") # return string com os simbolos ., - e ∪
-
 #conta o n de formas diferentes que um bloco de morse pode ser decodificado
 def contModosBloco(bloco: str) -> int:
     por_comprimento = {}#dict q armazena cods por comprimento
@@ -28,20 +27,20 @@ def contModosBloco(bloco: str) -> int:
     def backtrack(i): 
         if i == n: 
             return 1
-        if i in memo:#  return o val armazenado se  o indice foi calculado
+        if i in memo:#return o val armazenado se  o indice foi calculado
             return memo[i] 
         total = 0
         for L in sorted(por_comprimento.keys()):#pecorre comprimentos dos possveis cods 
             if L > n - i:   
                 break
             for cod in por_comprimento[L]:# percorre cods possiveis do comprimento L do dict 
-                if bloco.startswith(cod, i): #add 1 ao total se o bloco começa com o cod do dict
+                if bloco.startswith(cod, i): #+1 ao total se o bloco começa com o cod do dict
                     total += backtrack(i + L)  
         memo[i] = total     #se o indice i nao foi calculado, add total ao dict mem
         return total  
     return backtrack(0)   #return total de modos que o bloco pode ser decodificado
 
-#contar o n de mensagens diferentes que podem ser decodificadas
+#contar o n de mensagens diferentes que podem ser decodificadas 
 def contMensagens(mensagem: str) -> int:
     s = normalizar(mensagem)# normaliza a mensagem
     if not s:#return 0 se a mensagem n for valida
