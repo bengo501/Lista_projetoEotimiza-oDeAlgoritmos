@@ -1,22 +1,15 @@
+
 O código confuso
-
-Você pode ficar surpreso ao saber que uma mensagem enviada em código Morse pode ser decodificada de várias maneiras. 
-Por exemplo, a mensagem
-
-.- ..∪- .-.-.-∪.. ..−∪.. ..∪..−.-
-
-poderia ser decodificada como 383408 mensagens diferentes, todas válidas. Apenas o início dela (“.-..-”) 
-pode ser decodificado de 4 formas diferentes: ea, eet, it e apenas u.
-O problema da decodificação não tem solução algorítmica, ela deve ser feita de acordo com o contexto da mensagem, do idioma 
-sendo usado e de acordo com a experiência dos operadores¹.
-
-Seu trabalho é usar a tabela de código Morse dada em https://en.wikipedia.org/wiki/Morse_code#Mnemonics
-
-
-
-
-
-
+Você pode ficar surpreso ao saber que uma mensagem enviada em código Morse pode ser decodificada de várias maneiras. Por exemplo, a mensagem
+..- ∪ --..-.-.-... ∪ -- ∪ - ∪ --...-
+poderia ser decodificada como 383408 mensagens diferentes, todas válidas. Apenas o início dela ("..-") pode ser decodificado de 4 formas diferentes: ea, eet, it e apenas u. O problema da decodificação não tem solução algorítmica, ela deve ser feita de acordo com o contexto da mensagem, do idioma sendo usado e de acordo com a experiência dos operadores¹.
+Seu trabalho é usar a tabela de código Morse dada em https://en.wikipedia.org/wiki/Morse_code#Mnemonics (até o caracter inclusive) e depois escrever um programa que re-cebe uma mensagem em Morse como a que foi dada acima, composta de símbolos de 3 tipos diferentes:
+. representa um ponto Morse;
+- representa um traço Morse;
+∪ representa uma quebra entre símbolos (há 4 destas quebras na mensagem acima). Perceba que símbolos podem ser "grudados" sem que a quebra seja informada, como no início "..-". Por outro lado, quando a quebra é dada, ela é obrigatória e separa dois símbolos diferentes do alfabeto.
+Depois disso, seu programa deve informar quantas mensagens diferentes poderiam estar repre-sentadas. Perceba que todos os símbolos de ponto e traço devem ser usados, sem sobra nem falta de símbolos e que as quebras entre símbolos devem ser respeitadas como se fossem quebras entre os símbolos do código.
+Condições extras do trabalho:
+Seu programa deve ser entregue em Java, C ou python.
 
 
 

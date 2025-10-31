@@ -31,24 +31,6 @@ Pontuação (da tabela do artigo)
 - (hífen) -....- _ (sublinha) ..--.- " .-..-.
 $ ...-..- @ .--.-.
 
-Prosigns (sinais operacionais)
-
-K (convite geral p/ transmitir) -.-
-
-CT (início de transmissão / “KA”) -.-.-
-
-RN (próxima mensagem/“page separator”) .-.-.
-
-SK (fim de trabalho / “VA”) ...-.-
-
-HH (erro) ........
-
-Verified (também letra Ŝ) ...-.
-
-AS (aguarde; também proposto p/ &) .-...
-
-Não incluí os caracteres não-latinos do quadro (À, Ä, CH, etc.) porque o enunciado fala em usar a tabela “até onde interessa ao problema” e a mensagem-exemplo usa apenas alfabeto básico/pontuação. Se você quiser que também aceitemos esses caracteres estendidos, eu acrescento a lista completa.
-
 Observações alinhadas ao enunciado:
 
 Os três símbolos da entrada serão ., - e ∪.
