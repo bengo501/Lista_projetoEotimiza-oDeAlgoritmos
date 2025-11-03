@@ -52,7 +52,7 @@ def contMensagens(mensagem: str) -> int:
     return total # return total de mensagens diferentes que podem ser decodificadas
 def main(): 
     mensagem = input().strip()  
-    print(contMensagens(mensagem) if mensagem else "Digite uma mensagem em morse!") 
+    print(contMensagens(mensagem) if mensagem else "Digite uma mensagem em morse!") '      '
 
 if __name__ == "__main__":
     main()
