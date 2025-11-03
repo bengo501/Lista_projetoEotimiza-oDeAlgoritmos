@@ -9,7 +9,7 @@ cods = {
     "(": "-.--.", ")": "-.--.-", "&": ".-...", ":": "---...", ";": "-.-.-.",  "=": "-...-", 
     "+": ".-.-.", "-": "-....-", "_": "..--.-", '"': ".-..-.", "$": "...-..-", "@": ".--.-.",
 }
-#normaliza texto para o formato morse
+#normaliza texto
 def normalizar(texto: str) -> str:
     s = texto.strip().replace("−", "-").replace("–", "-").replace("—", "-") # s é a string normalizada
     if "∪" not in s:  
@@ -38,18 +38,18 @@ def contModosBloco(bloco: str) -> int:
                     total += backtrack(i + L)  
         memo[i] = total     #se o indice i nao foi calculado, add total ao dict mem
         return total  
-    return backtrack(0)   #return total de modos que o bloco pode ser decodificado
+    return backtrack(0)   #return total de modos
 
-#contar o n de mensagens diferentes que podem ser decodificadas 
+#contar o n de mensagens diferentes
 def contMensagens(mensagem: str) -> int:
-    s = normalizar(mensagem)# normaliza a mensagem
-    if not s:#return 0 se a mensagem n for valida
+    s = normalizar(mensagem)# normaliza mensagem
+    if not s:
         return 0
     total = 1 
     for bloco in s.split("∪"):#separação por ∪
-        if not bloco or not (total := total * contModosBloco(bloco)):#se o bloco é valido, total=total*contModosBloco(bloco)
-            return 0 #return 0 se o  bloco for invalido
-    return total # return total de mensagens diferentes que podem ser decodificadas
+        if not bloco or not (total := total * contModosBloco(bloco)): #se o bloco for valido
+            return 0 
+    return total # return total de mensagens diferentes
 def main(): 
     mensagem = input().strip()  
     print(contMensagens(mensagem) if mensagem else "Digite uma mensagem em morse!")
