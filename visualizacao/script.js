@@ -824,3 +824,310 @@ function stopGenetic() {
 }
 
 drawGraph(null);
+
+
+// --- GENETIC ALGORITHM: TSP ---
+let tspInterval = null;
+let tspCities = [];
+const TSP_POP_SIZE = 100;
+const TSP_ELITISM = 5;
+const TSP_MUTATION_RATE = 0.05;
+
+function startTSP() {
+    stopTSP();
+    
+    const canvas = document.getElementById('tsp-canvas');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // Generate random cities
+    tspCities = [];
+    for(let i=0; i<20; i++) {
+        tspCities.push({
+            x: Math.random() * (width - 40) + 20,
+            y: Math.random() * (height - 40) + 20
+        });
+    }
+    
+    // Initial population (random permutations)
+    let population = [];
+    for(let i=0; i<TSP_POP_SIZE; i++) {
+        population.push(shuffle([...tspCities]));
+    }
+    
+    let generation = 0;
+    const genDisplay = document.getElementById('tsp-gen');
+    const distDisplay = document.getElementById('tsp-dist');
+    
+    function evolve() {
+        // Calculate fitness (distance)
+        const scored = population.map(path => {
+            let dist = 0;
+            for(let i=0; i<path.length-1; i++) {
+                dist += Math.hypot(path[i].x - path[i+1].x, path[i].y - path[i+1].y);
+            }
+            dist += Math.hypot(path[path.length-1].x - path[0].x, path[path.length-1].y - path[0].y); // Return to start
+            return { path, dist };
+        });
+        
+        scored.sort((a, b) => a.dist - b.dist);
+        const best = scored[0];
+        
+        // Update UI
+        genDisplay.textContent = generation;
+        distDisplay.textContent = best.dist.toFixed(2);
+        drawTSP(best.path, tspCities);
+        
+        // New Population
+        const newPop = scored.slice(0, TSP_ELITISM).map(s => s.path);
+        
+        while(newPop.length < TSP_POP_SIZE) {
+            // Tournament Selection
+            const p1 = scored[Math.floor(Math.random()*TSP_POP_SIZE/2)].path; // Pick from better half
+            const p2 = scored[Math.floor(Math.random()*TSP_POP_SIZE/2)].path;
+            
+            // Order Crossover (OX1)
+            const start = Math.floor(Math.random() * tspCities.length);
+            const end = Math.floor(Math.random() * (tspCities.length - start)) + start;
+            
+            const child = new Array(tspCities.length).fill(null);
+            
+            // Copy sub-tour from P1
+            for(let i=start; i<=end; i++) child[i] = p1[i];
+            
+            // Fill rest from P2
+            let p2_idx = 0;
+            for(let i=0; i<tspCities.length; i++) {
+                if(child[i] === null) {
+                    while(child.includes(p2[p2_idx])) p2_idx++;
+                    child[i] = p2[p2_idx];
+                }
+            }
+            
+            // Swap Mutation
+            if(Math.random() < TSP_MUTATION_RATE) {
+                const idx1 = Math.floor(Math.random() * tspCities.length);
+                const idx2 = Math.floor(Math.random() * tspCities.length);
+                [child[idx1], child[idx2]] = [child[idx2], child[idx1]];
+            }
+            
+            newPop.push(child);
+        }
+        
+        population = newPop;
+        generation++;
+    }
+    
+    document.getElementById('tsp-status').textContent = "Status: Evoluindo...";
+    tspInterval = setInterval(evolve, 50); // Fast evolution
+}
+
+function stopTSP() {
+    if (tspInterval) clearInterval(tspInterval);
+    document.getElementById('tsp-status').textContent = "Status: Parado";
+}
+
+function drawTSP(path, cities) {
+    const canvas = document.getElementById('tsp-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw Cities
+    ctx.fillStyle = '#f38ba8';
+    cities.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 5, 0, 2*Math.PI);
+        ctx.fill();
+    });
+    
+    // Draw Path
+    ctx.strokeStyle = '#a6e3a1';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(path[0].x, path[0].y);
+    for(let i=1; i<path.length; i++) {
+        ctx.lineTo(path[i].x, path[i].y);
+    }
+    ctx.lineTo(path[0].x, path[0].y); // Close loop
+    ctx.stroke();
+}
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// --- GENETIC ALGORITHM: IMAGE RECONSTRUCTION ---
+let imgInterval = null;
+let targetCtx = null;
+let bestCtx = null;
+let targetData = null;
+const IMG_NUM_SHAPES = 50;
+const IMG_WIDTH = 200;
+const IMG_HEIGHT = 200;
+
+// Individual: Array of shapes
+// Shape: { x, y, r, red, green, blue, alpha }
+
+let currentDna = [];
+let currentError = Infinity;
+let imgGen = 0;
+
+function startImageGA() {
+    stopImageGA();
+    
+    const targetCanvas = document.getElementById('target-canvas');
+    const bestCanvas = document.getElementById('best-canvas');
+    targetCtx = targetCanvas.getContext('2d', { willReadFrequently: true });
+    bestCtx = bestCanvas.getContext('2d', { willReadFrequently: true });
+    
+    // 1. Generate Target Image (Simple Geometric Pattern)
+    drawTargetImage();
+    targetData = targetCtx.getImageData(0, 0, IMG_WIDTH, IMG_HEIGHT).data;
+    
+    // 2. Initialize Random DNA
+    currentDna = [];
+    for(let i=0; i<IMG_NUM_SHAPES; i++) {
+        currentDna.push(randomShape());
+    }
+    
+    // Initial Draw & Error
+    drawDna(bestCtx, currentDna);
+    currentError = calculateError(bestCtx);
+    imgGen = 0;
+    
+    document.getElementById('img-status').textContent = "Status: Evoluindo...";
+    
+    // 3. Evolution Loop
+    // Using (1+1)-ES (Hill Climbing) for performance
+    function evolveStep() {
+        for(let k=0; k<10; k++) { // Multiple attempts per frame
+            // Mutate
+            const index = Math.floor(Math.random() * IMG_NUM_SHAPES);
+            const oldShape = currentDna[index];
+            const newShape = mutateShape({...oldShape});
+            
+            currentDna[index] = newShape;
+            
+            // Evaluate
+            drawDna(bestCtx, currentDna);
+            const newError = calculateError(bestCtx);
+            
+            if(newError < currentError) {
+                // Keep mutation
+                currentError = newError;
+            } else {
+                // Revert
+                currentDna[index] = oldShape;
+            }
+        }
+        
+        imgGen += 10;
+        document.getElementById('img-gen').textContent = imgGen;
+        document.getElementById('img-error').textContent = currentError.toLocaleString();
+        
+        // Redraw best (in case last attempt was reverted, we need to ensure canvas is correct)
+        // Optimization: Only redraw if we kept the change? 
+        // For simplicity, we just redraw the current best state at the end of the batch
+        drawDna(bestCtx, currentDna);
+        
+        imgInterval = requestAnimationFrame(evolveStep);
+    }
+    
+    evolveStep();
+}
+
+function stopImageGA() {
+    if (imgInterval) cancelAnimationFrame(imgInterval);
+    document.getElementById('img-status').textContent = "Status: Parado";
+}
+
+function drawTargetImage() {
+    // Draw a simple "landscape" or pattern
+    targetCtx.fillStyle = '#87CEEB'; // Sky
+    targetCtx.fillRect(0, 0, IMG_WIDTH, IMG_HEIGHT);
+    
+    targetCtx.fillStyle = '#228B22'; // Ground
+    targetCtx.fillRect(0, 150, IMG_WIDTH, 50);
+    
+    targetCtx.fillStyle = '#FFD700'; // Sun
+    targetCtx.beginPath();
+    targetCtx.arc(150, 50, 30, 0, Math.PI*2);
+    targetCtx.fill();
+    
+    targetCtx.fillStyle = '#FF0000'; // House
+    targetCtx.fillRect(50, 120, 60, 60);
+    
+    targetCtx.fillStyle = '#8B4513'; // Roof
+    targetCtx.beginPath();
+    targetCtx.moveTo(40, 120);
+    targetCtx.lineTo(80, 80);
+    targetCtx.lineTo(120, 120);
+    targetCtx.fill();
+}
+
+function randomShape() {
+    return {
+        x: Math.random() * IMG_WIDTH,
+        y: Math.random() * IMG_HEIGHT,
+        r: Math.random() * 30 + 5,
+        red: Math.floor(Math.random() * 256),
+        green: Math.floor(Math.random() * 256),
+        blue: Math.floor(Math.random() * 256),
+        alpha: Math.random() * 0.5 + 0.1 // Semi-transparent
+    };
+}
+
+function mutateShape(shape) {
+    // Modify one property slightly
+    const r = Math.random();
+    if (r < 0.33) { // Position
+        shape.x += (Math.random() - 0.5) * 20;
+        shape.y += (Math.random() - 0.5) * 20;
+    } else if (r < 0.66) { // Color
+        shape.red = Math.min(255, Math.max(0, shape.red + (Math.random()-0.5)*50));
+        shape.green = Math.min(255, Math.max(0, shape.green + (Math.random()-0.5)*50));
+        shape.blue = Math.min(255, Math.max(0, shape.blue + (Math.random()-0.5)*50));
+        shape.alpha = Math.min(1, Math.max(0.1, shape.alpha + (Math.random()-0.5)*0.1));
+    } else { // Size
+        shape.r = Math.max(5, shape.r + (Math.random() - 0.5) * 10);
+    }
+    return shape;
+}
+
+function drawDna(ctx, dna) {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, IMG_WIDTH, IMG_HEIGHT);
+    
+    dna.forEach(shape => {
+        ctx.fillStyle = `rgba(${shape.red}, ${shape.green}, ${shape.blue}, ${shape.alpha})`;
+        ctx.beginPath();
+        ctx.arc(shape.x, shape.y, shape.r, 0, Math.PI*2);
+        ctx.fill();
+    });
+}
+
+function calculateError(ctx) {
+    const imgData = ctx.getImageData(0, 0, IMG_WIDTH, IMG_HEIGHT).data;
+    let error = 0;
+    
+    // Simple Sum of Absolute Differences (faster than MSE for JS)
+    for(let i=0; i<imgData.length; i+=4) {
+        error += Math.abs(imgData[i] - targetData[i]) +     // R
+                 Math.abs(imgData[i+1] - targetData[i+1]) + // G
+                 Math.abs(imgData[i+2] - targetData[i+2]);  // B
+    }
+    return error;
+}
+// Initialize Image GA on load
+setTimeout(() => {
+    const targetCanvas = document.getElementById('target-canvas');
+    if(targetCanvas) {
+        targetCtx = targetCanvas.getContext('2d', { willReadFrequently: true });
+        bestCtx = document.getElementById('best-canvas').getContext('2d', { willReadFrequently: true });
+        drawTargetImage();
+    }
+}, 500);

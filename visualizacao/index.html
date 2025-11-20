@@ -661,6 +661,194 @@ def run_genetic_algorithm():
                         </div>
                     </div>
                 </div>
+
+                <!-- Ex 2: TSP -->
+                <div class="exercise-block">
+                    <h4>2. O Caixeiro Viajante (TSP)</h4>
+                    <p><strong>Problema:</strong> Um vendedor precisa visitar N cidades exatamente uma vez e voltar à origem. Qual é o caminho mais curto?</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>Estratégia (Algoritmo Genético):</strong></p>
+                            <ul>
+                                <li><strong>Representação (Permutação):</strong> O genoma não é um vetor de números aleatórios, mas uma <strong>ordem</strong> de visita (ex: `[0, 3, 1, 2, 4]`). A ordem importa!</li>
+                                <li><strong>Fitness:</strong> O inverso da distância total do caminho ($1 / Distancia$). Queremos minimizar a distância.</li>
+                                <li><strong>Cruzamento (Order Crossover - OX1):</strong> Não podemos usar corte simples, pois geraria duplicatas ou cidades faltantes.
+                                    <ul>
+                                        <li>Copiamos um trecho do Pai 1.</li>
+                                        <li>Preenchemos o resto com as cidades do Pai 2, na ordem em que aparecem, pulando as que já estão no filho.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Mutação (Swap):</strong> Trocamos duas cidades de lugar aleatoriamente no caminho.</li>
+                            </ul>
+
+                            <p><strong>Passo a Passo:</strong></p>
+                            <ol>
+                                <li>Geramos uma população de caminhos aleatórios.</li>
+                                <li>Calculamos a distância total de cada caminho.</li>
+                                <li>Selecionamos os melhores (menor distância) para reproduzir.</li>
+                                <li>Aplicamos Crossover OX1 e Mutação Swap para criar novos caminhos.</li>
+                                <li>Repetimos por várias gerações até o caminho parar de melhorar.</li>
+                            </ol>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel explanation">
+                            <div class="controls">
+                                <button onclick="startTSP()">Iniciar Evolução</button>
+                                <button onclick="stopTSP()">Parar</button>
+                                <span id="tsp-status">Status: Aguardando...</span>
+                            </div>
+                            <div id="tsp-vis" class="visualization-area" style="flex-direction: column; align-items: center;">
+                                <canvas id="tsp-canvas" width="600" height="400" style="border: 1px solid #333; background: #1e1e2e; border-radius: 8px;"></canvas>
+                                <div id="tsp-stats" style="width: 100%; font-family: monospace; font-size: 12px; margin-top: 10px; color: #cdd6f4;">
+                                    Geração: <span id="tsp-gen">0</span> | Melhor Distância: <span id="tsp-dist">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def solve_tsp_genetic(cities):
+    # População: Lista de permutações aleatórias
+    pop = [random.sample(cities, len(cities)) for _ in range(POP_SIZE)]
+    
+    for gen in range(GENS):
+        # Avaliação: Distância total (menor é melhor)
+        pop.sort(key=lambda path: calculate_total_dist(path))
+        
+        # Elitismo: Melhores passam direto
+        new_pop = pop[:ELITISM]
+        
+        while len(new_pop) < POP_SIZE:
+            p1, p2 = tournament_selection(pop)
+            
+            # Crossover OX1 (Preserva ordem e evita duplicatas)
+            start, end = sorted(random.sample(range(len(cities)), 2))
+            child = [None]*len(cities)
+            child[start:end] = p1[start:end] # Copia trecho do P1
+            
+            # Preenche com P2
+            p2_idx = 0
+            for i in range(len(cities)):
+                if child[i] is None:
+                    while p2[p2_idx] in child:
+                        p2_idx += 1
+                    child[i] = p2[p2_idx]
+            
+            # Mutação Swap
+            if random.random() < MUTATION_RATE:
+                i, j = random.sample(range(len(cities)), 2)
+                child[i], child[j] = child[j], child[i]
+                
+            new_pop.append(child)
+        pop = new_pop
+                            </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>População:</strong> Cada indivíduo é uma lista contendo todas as cidades em uma ordem específica (permutação).</li>
+                                    <li><strong>Crossover OX1:</strong> É crucial para problemas de permutação. Ele preserva a "sub-rota" de um pai e a ordem relativa das outras cidades do outro pai, garantindo que o filho seja um caminho válido (sem cidades repetidas).</li>
+                                    <li><strong>Mutação Swap:</strong> A mutação simples de trocar um gene (cidade) por outro aleatório não funciona bem aqui. Em vez disso, trocamos duas cidades de posição na rota. Isso introduz diversidade sem quebrar a validade do caminho.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ex 3: Image Reconstruction -->
+                <div class="exercise-block">
+                    <h4>3. Reconstrução de Imagem (Mona Lisa Poligonal)</h4>
+                    <p><strong>Problema:</strong> Recriar uma imagem alvo usando apenas um número limitado de formas geométricas (círculos) semitransparentes.</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>Estratégia (Algoritmo Genético):</strong></p>
+                            <ul>
+                                <li><strong>Representação (Genótipo):</strong> Cada indivíduo não é uma imagem, mas uma <strong>lista de instruções de desenho</strong>. Ex: 50 círculos, onde cada um tem `(x, y, raio, r, g, b, alpha)`.</li>
+                                <li><strong>Fitness (Aptidão):</strong> Comparamos a imagem gerada pixel a pixel com a imagem alvo. Calculamos a diferença de cor (Erro Quadrático). Quanto menor o erro, maior o fitness.</li>
+                                <li><strong>Mutação:</strong> É o motor principal aqui. Alteramos levemente os parâmetros de um círculo: movemos um pouco, mudamos a cor ou o tamanho.</li>
+                            </ul>
+
+                            <p><strong>Passo a Passo:</strong></p>
+                            <ol>
+                                <li><strong>Alvo:</strong> Geramos uma imagem alvo simples (ex: um padrão geométrico).</li>
+                                <li><strong>População:</strong> Criamos desenhos aleatórios (borrões de círculos).</li>
+                                <li><strong>Evolução:</strong>
+                                    <ul>
+                                        <li>Pegamos o melhor desenho atual.</li>
+                                        <li>Criamos uma cópia mutada (filho).</li>
+                                        <li>Se o filho for mais parecido com o alvo que o pai, ele substitui o pai. (Estratégia Hill Climbing / (1+1)-ES para eficiência em tempo real).</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel explanation">
+                            <div class="controls">
+                                <button onclick="startImageGA()">Iniciar Reconstrução</button>
+                                <button onclick="stopImageGA()">Parar</button>
+                                <span id="img-status">Status: Aguardando...</span>
+                            </div>
+                            <div id="img-vis" class="visualization-area" style="justify-content: space-around;">
+                                <div style="text-align: center;">
+                                    <h6>Alvo</h6>
+                                    <canvas id="target-canvas" width="200" height="200" style="border: 1px solid #333; background: #000;"></canvas>
+                                </div>
+                                <div style="text-align: center;">
+                                    <h6>Evolução (<span id="img-gen">0</span> gens)</h6>
+                                    <canvas id="best-canvas" width="200" height="200" style="border: 1px solid #333; background: #000;"></canvas>
+                                </div>
+                            </div>
+                            <div style="text-align: center; margin-top: 10px; font-family: monospace; color: #cdd6f4;">
+                                Diferença (Erro): <span id="img-error">0</span>
+                            </div>
+                        </div>
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def solve_image_reconstruction():
+    # Indivíduo: Lista de formas (Círculos)
+    current_solution = [random_circle() for _ in range(NUM_SHAPES)]
+    current_error = calculate_error(current_solution, target_image)
+    
+    for gen in range(GENERATIONS):
+        # Mutação: Modifica levemente uma forma
+        new_solution = copy(current_solution)
+        mutate_shape(new_solution[random_index])
+        
+        # Avaliação
+        new_error = calculate_error(new_solution, target_image)
+        
+        # Seleção (Hill Climbing simples)
+        if new_error < current_error:
+            current_solution = new_solution
+            current_error = new_error
+            
+    return current_solution
+
+def calculate_error(shapes, target):
+    # Desenha as formas em uma imagem temporária
+    generated_img = draw(shapes)
+    # Calcula diferença de pixels (MSE)
+    return mean_squared_error(generated_img, target)
+                            </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>Abordagem Simplificada:</strong> Para reconstrução de imagem em tempo real, frequentemente usamos uma variante de AG chamada <em>Hill Climbing</em> ou <em>(1+1)-Evolution Strategy</em>. Em vez de uma população gigante, mantemos o "melhor desenho até agora" e tentamos melhorá-lo passo a passo.</li>
+                                    <li><strong>Mutação:</strong> A cada passo, pegamos um círculo aleatório e mudamos um pouco sua cor, posição ou raio. Se a mudança deixar a imagem mais parecida com o alvo, mantemos. Se piorar, descartamos.</li>
+                                    <li><strong>Custo Computacional:</strong> A função `calculate_error` é pesada pois precisa ler todos os pixels. Por isso usamos imagens pequenas na visualização.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
     </div>
