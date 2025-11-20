@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualização de Algoritmos</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Projeto e Otimização de Algoritmos</h1>
+            <p>Visualização Interativa e Teoria: Backtracking, Branch & Bound e Algoritmos Genéticos</p>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="openTab('backtracking')">Backtracking</button>
+            <button class="tab-btn" onclick="openTab('branchbound')">Branch & Bound</button>
+            <button class="tab-btn" onclick="openTab('genetic')">Algoritmos Genéticos</button>
+        </nav>
+
+        <main>
+            <!-- BACKTRACKING SECTION -->
+            <section id="backtracking" class="tab-content active">
+                <div class="theory-section">
+                    <h2>Teoria: Backtracking</h2>
+                    <p>O Backtracking é uma técnica refinada de <strong>busca exaustiva</strong> (força bruta). Enquanto a força bruta gera todas as soluções possíveis e depois verifica quais servem, o Backtracking constrói a solução passo a passo e abandona (poda) um caminho assim que percebe que ele não levará a uma solução válida.</p>
+                    
+                    <h3>A Mentalidade do Backtracking</h3>
+                    <p>Imagine que você está em um labirinto. A estratégia do Backtracking é:</p>
+                    <ol>
+                        <li>Escolha um caminho e vá em frente.</li>
+                        <li>Se encontrar uma bifurcação, escolha uma opção e continue.</li>
+                        <li>Se encontrar um beco sem saída, <strong>volte</strong> (backtrack) até a última bifurcação e tente a próxima opção.</li>
+                        <li>Se todas as opções da bifurcação falharem, volte para a bifurcação anterior.</li>
+                    </ol>
+                    <p>Essa abordagem de "falhar cedo" (fail-fast) é o que torna o Backtracking muito mais eficiente que a força bruta pura.</p>
+
+                    <h3>Conceitos Chave</h3>
+                    <ul>
+                        <li><strong>Árvore do Espaço de Estados:</strong> O problema é modelado como uma árvore onde cada nível representa uma decisão (ex: qual coluna colocar a rainha na linha 3).</li>
+                        <li><strong>Nó Promissor:</strong> Uma solução parcial que ainda não violou nenhuma regra e pode levar a uma solução completa.</li>
+                        <li><strong>Nó Não-Promissor:</strong> Um nó que viola uma restrição. O algoritmo deve podar a busca aqui.</li>
+                        <li><strong>Poda (Pruning):</strong> O ato de cortar um ramo inteiro da árvore porque sabemos que ele não contém a solução.</li>
+                    </ul>
+
+                    <h3>Tipos de Restrições</h3>
+                    <ul>
+                        <li><strong>Restrições Explícitas:</strong> Definem o domínio das variáveis. Ex: $x_i \in \{1, ..., N\}$. Elas limitam o tamanho do espaço de busca inicial.</li>
+                        <li><strong>Restrições Implícitas:</strong> Definem as regras que devem ser respeitadas entre as variáveis. Ex: "Nenhuma rainha pode atacar outra". São usadas pelas funções de verificação para decidir se um nó é promissor.</li>
+                    </ul>
+                </div>
+
+                <hr class="divider">
+
+                <h3>Exercícios</h3>
+                
+                <!-- Ex 1: Square Sum -->
+                <div class="exercise-block">
+                    <h4>1. Sequência de Soma Quadrada (Square Sum)</h4>
+                    <p><strong>Problema:</strong> Encontrar uma permutação de 1 a N tal que a soma de cada par adjacente seja um quadrado perfeito.</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>O Problema:</strong></p>
+                            <p>Dado um número N, queremos organizar os números de 1 a N em uma linha tal que a soma de qualquer par vizinho seja um quadrado perfeito (ex: 1, 4, 9, 16...).</p>
+
+                            <p><strong>Estratégia (Teoria dos Grafos):</strong></p>
+                            <p>Modelamos o problema como um <strong>Grafo</strong> onde:</p>
+                            <ul>
+                                <li><strong>Nós:</strong> Os números de 1 a N.</li>
+                                <li><strong>Arestas:</strong> Existe uma conexão entre A e B se A+B for um quadrado perfeito.</li>
+                            </ul>
+                            <p>O objetivo é encontrar um <strong>Caminho Hamiltoniano</strong>: um caminho que visita todos os nós do grafo exatamente uma vez.</p>
+
+                            <p><strong>Passo a Passo:</strong></p>
+                            <ol>
+                                <li><strong>Pré-cálculo:</strong> Criamos uma lista de adjacência. Para cada número, listamos todos os outros com quem ele pode somar um quadrado perfeito. Isso acelera muito a busca.</li>
+                                <li><strong>Busca (Backtracking):</strong> Escolhemos um número inicial (ex: 1).</li>
+                                <li>Tentamos adicionar um vizinho da lista de adjacência que ainda não foi usado no caminho atual.</li>
+                                <li>Se conseguirmos completar a lista com N números, encontramos a solução!</li>
+                                <li>Se chegarmos num beco sem saída (número atual não tem vizinhos livres), fazemos <strong>backtrack</strong>: removemos o último número e tentamos outra opção.</li>
+                            </ol>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def solve_square_sum(n):
+    adj = {i: [] for i in range(1, n + 1)}
+    for i in range(1, n + 1):
+        for j in range(i + 1, n + 1):
+            if is_perfect_square(i + j):
+                adj[i].append(j); adj[j].append(i)
+    
+    path = []; used = [False] * (n + 1)
+    def backtrack(curr):
+        path.append(curr); used[curr] = True
+        if len(path) == n: return True
+        for neighbor in adj[curr]:
+            if not used[neighbor]:
+                if backtrack(neighbor): return True
+        used[curr] = False; path.pop()
+        return False
+                            </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>Pré-processamento (Grafo):</strong> Antes de buscar, construímos um dicionário `adj`. Para cada número `i`, `adj[i]` contém a lista de todos os números `j` tal que `i+j` é quadrado perfeito. Isso transforma o problema num grafo.</li>
+                                    <li><strong>Backtracking (`backtrack`):</strong>
+                                        <ul>
+                                            <li>Recebe o número atual (`curr`).</li>
+                                            <li>Marca como usado e adiciona ao caminho.</li>
+                                            <li><strong>Caso Base:</strong> Se o caminho tem tamanho `n`, achamos a solução! Retorna `True`.</li>
+                                            <li><strong>Passo Recursivo:</strong> Itera sobre os vizinhos válidos em `adj[curr]`. Se um vizinho não foi usado, chama `backtrack(neighbor)`.</li>
+                                            <li><strong>Desfazer (Backtrack):</strong> Se nenhum vizinho levar à solução, desmarcamos `curr` (`used[curr] = False`) e removemos do caminho, voltando para tentar outra opção.</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel output">
+                            <h5>Visualização (N=15)</h5>
+                            <div class="controls">
+                                <button onclick="runSquareSum()">Executar Simulação</button>
+                                <button onclick="stopSquareSum()">Parar</button>
+                            </div>
+                            <canvas id="squaresum-canvas" width="400" height="400"></canvas>
+                            <pre id="squaresum-output" style="margin-top: 10px; height: 100px; overflow-y: auto;">Clique em "Executar" para ver o resultado.</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ex 2: N-Queens -->
+                <div class="exercise-block">
+                    <h4>2. O Problema das N-Rainhas</h4>
+                    <p><strong>Problema:</strong> Posicionar N rainhas em um tabuleiro NxN sem que nenhuma ataque a outra.</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>O Problema:</strong></p>
+                            <p>Posicionar N rainhas em um tabuleiro NxN sem que nenhuma ataque a outra (mesma linha, coluna ou diagonal).</p>
+
+                            <p><strong>Estratégia:</strong></p>
+                            <p>Sabemos que cada linha deve ter exatamente uma rainha. O desafio é escolher a coluna certa para cada linha. As restrições são:</p>
+                            <ul>
+                                <li><strong>Coluna:</strong> Não pode haver outra rainha na mesma coluna.</li>
+                                <li><strong>Diagonal Principal:</strong> <code>(linha - coluna)</code> deve ser único.</li>
+                                <li><strong>Diagonal Secundária:</strong> <code>(linha + coluna)</code> deve ser único.</li>
+                            </ul>
+
+                            <p><strong>Passo a Passo:</strong></p>
+                            <ol>
+                                <li>Começamos na linha 0. Tentamos colocar a rainha na coluna 0.</li>
+                                <li>Verificamos se é seguro (função <code>is_safe</code> checa coluna e diagonais com rainhas anteriores).</li>
+                                <li>Se for seguro, colocamos a rainha e avançamos recursivamente para a linha 1.</li>
+                                <li>Se encontrarmos um conflito em todas as colunas de uma linha, significa que a escolha anterior estava errada. Voltamos para a linha anterior (<strong>backtrack</strong>), removemos a rainha e tentamos a próxima coluna.</li>
+                                <li>Repetimos até posicionar todas as N rainhas.</li>
+                            </ol>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel explanation">
+                            <div class="controls">
+                                <label for="queens-n">N (Tamanho):</label>
+                                <input type="number" id="queens-n" value="8" min="4" max="12">
+                                <button onclick="startNQueens()">Iniciar Visualização</button>
+                                <button onclick="stopNQueens()">Parar</button>
+                                <span id="queens-status">Status: Aguardando...</span>
+                            </div>
+                            <div id="chessboard" class="visualization-area"></div>
+                        </div>
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def solve_n_queens(n):
+    board = [-1] * n
+    def is_safe(row, col):
+        for prev in range(row):
+            if board[prev] == col or \
+               abs(prev-row) == abs(board[prev]-col):
+                return False
+        return True
+
+    def backtrack(row):
+        if row == n: return True
+        for col in range(n):
+            if is_safe(row, col):
+                board[row] = col
+                if backtrack(row + 1): return True
+                board[row] = -1
+        return False
+                            </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>Representação:</strong> O vetor `board` de tamanho N guarda a posição da rainha em cada linha. `board[row] = col`.</li>
+                                    <li><strong>Validação (`is_safe`):</strong> Verifica se a rainha na posição `(row, col)` ataca alguma anterior.
+                                        <ul>
+                                            <li>Mesma coluna: `board[prev] == col`.</li>
+                                            <li>Diagonais: A diferença absoluta das linhas é igual à diferença absoluta das colunas (`abs(prev-row) == abs(board[prev]-col)`).</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Backtracking:</strong> Tenta colocar uma rainha em cada coluna da linha atual. Se for seguro, avança para `row + 1`. Se falhar, remove a rainha (`board[row] = -1`) e tenta a próxima coluna.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ex 3: Knight's Tour -->
+                <div class="exercise-block">
+                    <h4>3. Passeio do Cavalo (Knight's Tour)</h4>
+                    <p><strong>Problema:</strong> O cavalo deve visitar todas as casas do tabuleiro exatamente uma vez.</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>O Problema:</strong></p>
+                            <p>O cavalo deve visitar todas as casas do tabuleiro exatamente uma vez, movendo-se em "L".</p>
+
+                            <p><strong>Estratégia (Heurística de Warnsdorff):</strong></p>
+                            <p>Em tabuleiros grandes, o Backtracking puro é muito lento. Usamos uma regra inteligente para escolher o próximo passo:</p>
+                            <blockquote>
+                                "Sempre mova para a casa vizinha que tenha o <strong>menor número de saídas possíveis</strong>."
+                            </blockquote>
+                            <p>Isso evita que o cavalo entre em becos sem saída cedo demais, forçando-o a visitar as casas "difíceis" (cantos e bordas) primeiro.</p>
+
+                            <p><strong>Passo a Passo:</strong></p>
+                            <ol>
+                                <li>Começamos em uma posição (ex: 0,0).</li>
+                                <li>Geramos os 8 movimentos possíveis do cavalo.</li>
+                                <li>Filtramos os inválidos (fora do tabuleiro ou já visitados).</li>
+                                <li><strong>Ordenação Inteligente:</strong> Ordenamos os movimentos restantes pela regra de Warnsdorff (prioridade para quem tem menos vizinhos livres).</li>
+                                <li>Escolhemos o melhor movimento, marcamos a casa e recursamos.</li>
+                                <li>Se completarmos N*N passos, sucesso!</li>
+                            </ol>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def solve_knights_tour(n):
+    board = [[-1]*n for _ in range(n)]
+    moves = [(2,1), (1,2), ...] 
+    
+    def backtrack(x, y, count):
+        if count == n*n: return True
+        # Heurística de Warnsdorff: 
+        # Priorizar movimentos com menos saídas
+        next_moves = get_sorted_moves(x, y)
+        
+        for nx, ny in next_moves:
+            board[nx][ny] = count
+            if backtrack(nx, ny, count+1): return True
+            board[nx][ny] = -1
+        return False
+                            </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>Matriz `board`:</strong> Representa o tabuleiro. `-1` é não visitado, `0..N*N-1` é a ordem da visita.</li>
+                                    <li><strong>Heurística de Warnsdorff:</strong> A linha `next_moves = get_sorted_moves(x, y)` é o segredo.
+                                        <ul>
+                                            <li>Em vez de tentar movimentos aleatórios, calculamos quantos movimentos válidos existem a partir de cada destino possível.</li>
+                                            <li>Ordenamos para visitar primeiro as casas que têm <strong>menos saídas</strong> (os "cantos" e lugares difíceis). Isso evita ficar preso.</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Recursão:</strong> Tenta mover, marca, chama recursivamente. Se falhar, desmarca (backtrack).</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="panel output">
+                            <h5>Saída (N=8)</h5>
+                            <pre id="knight-output">Clique em "Executar" para ver o resultado.</pre>
+                            <button onclick="runKnightTour()">Executar Simulação</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BRANCH AND BOUND SECTION -->
+            <section id="branchbound" class="tab-content">
+                <div class="theory-section">
+                    <h2>Teoria: Branch and Bound</h2>
+                    <p>O Branch and Bound (Ramificar e Limitar) é uma melhoria do Backtracking focada em <strong>Problemas de Otimização</strong> (Minimizar custos ou Maximizar valores). Ele usa <strong>Limites (Bounds)</strong> para podar ramos que matematicamente não podem conter uma solução melhor que a atual.</p>
+
+                    <h3>A Mentalidade: "Não Trabalhe à Toa"</h3>
+                    <p>A grande sacada do Branch and Bound é a eficiência baseada em previsões:</p>
+                    <ul>
+                        <li><strong>Backtracking:</strong> Corta um ramo apenas quando ele viola uma regra (ex: "Rainhas se atacando").</li>
+                        <li><strong>Branch and Bound:</strong> Corta um ramo quando calcula que, mesmo no melhor cenário possível, aquele caminho não superará a melhor solução que já encontramos.</li>
+                    </ul>
+
+                    <h3>Os Dois Pilares</h3>
+                    <ol>
+                        <li><strong>Limite (Bound):</strong> Uma estimativa otimista do futuro.
+                            <ul>
+                                <li><em>Minimização:</em> Limite Inferior (Lower Bound) - "O custo daqui pra frente será <em>pelo menos</em> X".</li>
+                                <li><em>Maximização:</em> Limite Superior (Upper Bound) - "O valor daqui pra frente será <em>no máximo</em> Y".</li>
+                            </ul>
+                        </li>
+                        <li><strong>Melhor Solução Atual:</strong> O recorde a ser batido. Se o <em>Bound</em> de um nó é pior que o recorde, podamos o nó imediatamente.</li>
+                    </ol>
+
+                    <h3>Estratégias de Busca</h3>
+                    <p>Como escolhemos qual nó explorar a seguir?</p>
+                    <ul>
+                        <li><strong>FIFO (Largura) / LIFO (Profundidade):</strong> Estratégias "cegas" que exploram a árvore sem considerar a qualidade dos nós.</li>
+                        <li><strong>LC-Search (Least Cost - Menor Custo):</strong> A estratégia inteligente. Sempre expande o nó mais promissor (com o melhor Bound). Isso guia a busca direto para a solução ótima, economizando muito tempo.</li>
+                    </ul>
+
+                    <h3>Exemplos Clássicos</h3>
+                    <ul>
+                        <li><strong>Problema da Mochila:</strong> Usamos a "Relaxação Linear" (pegar frações de itens) para calcular o Limite Superior de valor.</li>
+                        <li><strong>Alocação de Tarefas:</strong> Usamos a soma dos menores custos de cada linha para calcular o Limite Inferior.</li>
+                        <li><strong>Jogo do 15 (Puzzle):</strong> Usamos o número de peças fora do lugar como heurística de custo.</li>
+                    </ul>
+                </div>
+
+                <hr class="divider">
+
+                <h3>Exercícios</h3>
+
+                <!-- Ex 1: Knapsack -->
+                <div class="exercise-block">
+                    <h4>1. Problema da Mochila (Knapsack)</h4>
+                    <p><strong>Problema:</strong> Maximizar o valor dos itens na mochila sem exceder a capacidade.</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>O Problema:</strong></p>
+                            <p>Você é um ladrão com uma mochila de capacidade $W$. Existem itens com peso $w_i$ e valor $v_i$. O objetivo é escolher os itens para maximizar o valor total sem rasgar a mochila. A regra é <strong>0/1</strong>: ou leva o item inteiro, ou não leva.</p>
+
+                            <p><strong>Estratégia (Branch and Bound):</strong></p>
+                            <ul>
+                                <li><strong>Ramificação:</strong> A cada passo, decidimos sobre um item: <em>Incluir</em> (Ramo Esquerdo) ou <em>Excluir</em> (Ramo Direito).</li>
+                                <li><strong>Limitação (Bounding):</strong> Para saber se um ramo é promissor, calculamos seu <strong>Limite Superior (Upper Bound)</strong> usando <strong>Relaxação Linear</strong>.
+                                    <ul>
+                                        <li>Imaginamos que podemos levar <em>frações</em> dos itens restantes.</li>
+                                        <li>Enchemos a mochila com os itens mais valiosos (maior densidade Valor/Peso).</li>
+                                        <li>O valor dessa "mochila fracionária ideal" é o teto matemático. Se esse teto for menor que uma solução inteira que já temos, <strong>podamos</strong> o ramo (cortamos o mal pela raiz).</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Busca:</strong> Usamos uma <strong>Fila de Prioridade</strong> para explorar sempre o nó com maior Bound (Best-First Search).</li>
+                            </ul>
+
+                            <p><strong>Passo a Passo:</strong></p>
+                            <ol>
+                                <li><strong>Ordenação:</strong> Ordenamos todos os itens por densidade ($v_i / w_i$) decrescente.</li>
+                                <li><strong>Raiz:</strong> Calculamos o Bound inicial (mochila vazia + frações ideais).</li>
+                                <li><strong>Loop:</strong> Enquanto houver nós na fila:
+                                    <ul>
+                                        <li>Removemos o nó com maior Bound.</li>
+                                        <li>Se seu Bound for pior que a melhor solução já encontrada, descartamos.</li>
+                                        <li>Geramos dois filhos: Com o próximo item e Sem o próximo item.</li>
+                                        <li>Calculamos o Bound dos filhos e os adicionamos na fila (se forem promissores).</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel explanation">
+                            <div class="controls">
+                                <button onclick="startKnapsack()">Iniciar Visualização</button>
+                                <button onclick="stopKnapsack()">Parar</button>
+                                <span id="knapsack-status">Status: Aguardando...</span>
+                            </div>
+                            <div id="knapsack-vis" class="visualization-area" style="flex-direction: column; align-items: center;">
+                                <div id="knapsack-items" style="margin-bottom: 10px;"></div>
+                                <canvas id="knapsack-canvas" width="600" height="400" style="border: 1px solid #333; background: #1e1e2e; border-radius: 8px;"></canvas>
+                                <div id="knapsack-log" style="width: 100%; max-height: 100px; overflow-y: auto; font-family: monospace; font-size: 12px; margin-top: 10px; background: #111; padding: 5px;"></div>
+                            </div>
+                        </div>
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def solve_knapsack(W, items):
+    # 1. Ordena por densidade (Valor/Peso)
+    items.sort(key=lambda x: x.val/x.weight, reverse=True)
+    
+    # Fila de Prioridade (Max-Heap pelo Bound)
+    pq = []
+    
+    # Raiz: Nenhum item considerado ainda
+    u = Node(level=-1, profit=0, weight=0)
+    u.bound = calculate_bound(u, W, items)
+    heapq.heappush(pq, u)
+    
+    max_profit = 0
+    
+    while pq:
+        u = heapq.heappop(pq) # Pega nó com maior potencial
+        
+        # PODA: Se o potencial (Bound) não supera o que já temos...
+        if u.bound > max_profit:
+            
+            # Ramo Esquerdo: INCLUIR item
+            v = Node(level=u.level+1, ...)
+            if v.weight <= W and v.profit > max_profit:
+                max_profit = v.profit # Atualiza melhor solução
+            if v.bound > max_profit:
+                heapq.heappush(pq, v) # Adiciona se promissor
+                
+            # Ramo Direito: EXCLUIR item
+            v = Node(level=u.level+1, ...)
+            if v.bound > max_profit:
+                heapq.heappush(pq, v) # Adiciona se promissor
+                            </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>Ordenação:</strong> Começamos ordenando os itens pela densidade ($Valor/Peso$). Isso ajuda o algoritmo guloso a calcular Bounds mais precisos.</li>
+                                    <li><strong>Fila de Prioridade (Heap):</strong> Usamos uma `heapq` para sempre expandir o nó com maior potencial (`bound`). Isso é a estratégia <em>Best-First Search</em>.</li>
+                                    <li><strong>Nó Raiz:</strong> Representa a mochila vazia. Seu Bound é calculado assumindo que podemos pegar frações dos melhores itens.</li>
+                                    <li><strong>Loop Principal:</strong> Enquanto houver nós promissores:
+                                        <ol>
+                                            <li>Removemos o melhor nó da fila.</li>
+                                            <li>Verificamos se seu Bound ainda é maior que o `max_profit` atual. Se não for, podamos (descartamos).</li>
+                                            <li>Geramos dois filhos: um <strong>incluindo</strong> o próximo item e outro <strong>excluindo</strong>.</li>
+                                            <li>Calculamos o Bound dos filhos e os adicionamos na fila se tiverem potencial.</li>
+                                        </ol>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ex 2: Assignment Problem -->
+                <div class="exercise-block">
+                    <h4>2. Alocação de Tarefas (Assignment Problem)</h4>
+                    <p><strong>Problema:</strong> Atribuir N trabalhadores a N tarefas de modo que o custo total seja mínimo. Cada trabalhador cobra um valor diferente por tarefa.</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>O Problema:</strong></p>
+                            <p>Imagine que você tem $N$ trabalhadores e $N$ tarefas. Cada trabalhador cobra um valor diferente para realizar cada tarefa (dado por uma Matriz de Custos). O objetivo é encontrar uma atribuição perfeita (1 trabalhador para 1 tarefa) que resulte no <strong>menor custo total</strong> possível.</p>
+
+                            <p><strong>Estratégia (Branch and Bound com Redução de Matriz):</strong></p>
+                            <p>Para resolver isso de forma inteligente, precisamos de um <strong>Limite Inferior (Lower Bound)</strong>: uma estimativa de "qual é o custo mínimo que <em>com certeza</em> teremos que pagar, não importa o que aconteça?".</p>
+                            <ul>
+                                <li><strong>Cálculo do Bound (Redução de Linhas):</strong>
+                                    <ul>
+                                        <li>Em cada linha da matriz, o trabalhador <em>precisa</em> escolher pelo menos uma tarefa.</li>
+                                        <li>Logo, ele vai gastar <em>pelo menos</em> o valor do menor elemento daquela linha.</li>
+                                        <li>Se somarmos os mínimos de todas as linhas, temos um custo base que é impossível de evitar. Esse é o nosso Bound Inicial.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Ramificação:</strong>
+                                    <ul>
+                                        <li>A árvore de decisão funciona atribuindo trabalhadores um por um.</li>
+                                        <li>Nível 0: Escolhas para o Trabalhador A.</li>
+                                        <li>Nível 1: Escolhas para o Trabalhador B (dado o que A escolheu).</li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+                            <p><strong>Passo a Passo da Execução:</strong></p>
+                            <ol>
+                                <li><strong>Início:</strong> Calculamos o Bound da raiz somando os mínimos de cada linha da matriz original.</li>
+                                <li><strong>Expansão:</strong> Pegamos o nó com menor custo estimado da fila. Digamos que seja a vez do Trabalhador A.</li>
+                                <li><strong>Gerar Filhos:</strong> Criamos um ramo para cada tarefa disponível para A (Tarefa 1, Tarefa 2, etc.).</li>
+                                <li><strong>Calcular Custo dos Filhos:</strong>
+                                    <ul>
+                                        <li>Custo do Filho = (Custo do Pai) + (Custo Real da Tarefa Escolhida) + (Novo Bound das linhas restantes).</li>
+                                        <li>Ao escolher uma tarefa, eliminamos aquela coluna para os próximos trabalhadores.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Best-First:</strong> Adicionamos os filhos na fila de prioridade e repetimos. O algoritmo vai "navegar" na direção que parece mais barata, evitando combinações caras.</li>
+                            </ol>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel explanation">
+                            <div class="controls">
+                                <button onclick="startAssignment()">Iniciar Visualização</button>
+                                <button onclick="stopAssignment()">Parar</button>
+                                <span id="assignment-status">Status: Aguardando...</span>
+                            </div>
+                            <div id="assignment-vis" class="visualization-area" style="flex-direction: column;">
+                                <div id="assignment-matrix" style="display: grid; gap: 5px; margin-bottom: 15px;"></div>
+                                <div id="assignment-log" style="width: 100%; max-height: 100px; overflow-y: auto; font-family: monospace; font-size: 12px; background: #111; padding: 5px;"></div>
+                            </div>
+                        </div>
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def solve_assignment(cost_matrix):
+    n = len(cost_matrix)
+    pq = []
+    
+    # Raiz: Nenhuma tarefa atribuída
+    root = Node(worker=-1, cost=0, assigned=[F]*n)
+    root.cost = calculate_lower_bound(cost_matrix)
+    heapq.heappush(pq, root)
+    
+    min_cost = Infinity
+    
+    while pq:
+        u = heapq.heappop(pq) # Menor custo estimado
+        
+        if u.cost < min_cost:
+            worker = u.worker + 1
+            
+            if worker == n:
+                min_cost = u.cost
+                return u.assigned # Solução ótima
+            
+            # Tenta atribuir cada tarefa disponível
+            for task in range(n):
+                if not u.assigned[task]:
+                    v = Node(worker, ...)
+                    v.cost = u.cost + cost_matrix[worker][task] + ...
+                    if v.cost < min_cost:
+                        heapq.heappush(pq, v)
+                            </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>Estrutura do Nó:</strong> Cada nó guarda quem é o trabalhador atual (`worker`), o custo acumulado até agora (`cost`), e a lista de atribuições feitas (`assigned`).</li>
+                                    <li><strong>Bound Inicial:</strong> A função `calculate_lower_bound` soma os mínimos de cada linha para nos dar um ponto de partida otimista.</li>
+                                    <li><strong>Loop de Busca:</strong>
+                                        <ol>
+                                            <li>Sempre retiramos da fila o nó com <strong>menor custo total estimado</strong>.</li>
+                                            <li>Se chegamos ao último trabalhador (`worker == n`), encontramos uma solução completa. Como usamos Best-First, a primeira solução completa encontrada é garantidamente a ótima!</li>
+                                            <li>Caso contrário, tentamos atribuir o próximo trabalhador a todas as tarefas que ainda estão livres (`if not u.assigned[task]`).</li>
+                                            <li>Para cada tentativa, criamos um novo nó e calculamos seu custo. Se for promissor (menor que o melhor custo visto), vai para a fila.</li>
+                                        </ol>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GENETIC ALGORITHMS SECTION -->
+            <section id="genetic" class="tab-content">
+                <div class="theory-section">
+                    <h2>Teoria: Algoritmos Genéticos</h2>
+                    <p>Inspirados na evolução biológica, os Algoritmos Genéticos (AGs) são métodos de busca que mantêm uma <strong>população</strong> de soluções candidatas, em vez de uma única solução. Eles evoluem ao longo de gerações através de processos análogos à seleção natural.</p>
+
+                    <h3>A Mentalidade Evolutiva</h3>
+                    <p>Diferente de métodos como "Subida de Encosta" (Hill Climbing) que podem ficar presos em ótimos locais (picos baixos), os AGs exploram a "paisagem" de soluções com múltiplos indivíduos simultaneamente.</p>
+                    <ul>
+                        <li><strong>Seleção:</strong> Indivíduos mais aptos (maior Fitness) têm maior chance de sobreviver e reproduzir.</li>
+                        <li><strong>Cruzamento (Crossover):</strong> Combina informações de dois pais para criar filhos, tentando juntar as melhores características de cada um.</li>
+                        <li><strong>Mutação:</strong> Pequenas alterações aleatórias para manter a diversidade genética e evitar estagnação.</li>
+                    </ul>
+
+                    <h3>O Teorema do Esquema (Schema Theorem)</h3>
+                    <p>Esta é a base matemática que explica <em>por que</em> os AGs funcionam. Um <strong>Esquema</strong> é um padrão de bits (ex: `1*0**`) que representa um conjunto de soluções semelhantes.</p>
+                    
+                    <p><strong>Hipótese dos Blocos de Construção (Building Block Hypothesis):</strong></p>
+                    <blockquote>
+                        "Esquemas curtos, de baixa ordem e de alta aptidão crescem exponencialmente na população."
+                    </blockquote>
+                    <p>O algoritmo funciona porque ele identifica e preserva esses pequenos "blocos de construção" (pedaços de solução que são bons) e os combina através do cruzamento para formar soluções cada vez mais complexas e próximas do ótimo global.</p>
+                </div>
+
+                <hr class="divider">
+
+                <h3>Exercícios</h3>
+
+                <!-- Ex 1: Polynomial -->
+                <div class="exercise-block">
+                    <h4>1. Ajuste de Curva Polinomial</h4>
+                    <p><strong>Problema:</strong> Encontrar coeficientes a, b, c, d para minimizar o erro entre a curva gerada e os pontos alvo.</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>O Problema:</strong></p>
+                            <p>Queremos descobrir qual é a função $f(x) = ax^3 + bx^2 + cx + d$ que melhor se ajusta a um conjunto de pontos (uma curva alvo). Não sabemos os valores de $a, b, c, d$, então usamos o AG para "evoluir" esses valores.</p>
+
+                            <p><strong>Estratégia Evolutiva:</strong></p>
+                            <ul>
+                                <li><strong>Representação (Genótipo):</strong> Cada indivíduo da população é um vetor de 4 números reais: <code>[a, b, c, d]</code>.</li>
+                                <li><strong>Fitness (Aptidão):</strong> O objetivo é <em>minimizar</em> o erro. Calculamos a diferença absoluta entre a curva do indivíduo e a curva alvo em vários pontos. Quanto menor o erro, melhor.</li>
+                                <li><strong>Seleção (Truncation):</strong> Nesta implementação, somos elitistas radicais. Apenas os <strong>5 melhores</strong> indivíduos de toda a população sobrevivem e se tornam pais da próxima geração.</li>
+                                <li><strong>Cruzamento (Aritmético):</strong> Um filho é a média dos coeficientes dos pais. Se Pai1 tem $a=2$ e Pai2 tem $a=4$, o filho terá $a=3$.</li>
+                                <li><strong>Mutação:</strong> Adicionamos um pequeno valor aleatório (ruído) aos coeficientes do filho para explorar novas possibilidades.</li>
+                            </ul>
+
+                            <p><strong>Passo a Passo da Execução:</strong></p>
+                            <ol>
+                                <li><strong>Gênesis:</strong> Criamos 50 indivíduos com coeficientes totalmente aleatórios (entre -10 e 10).</li>
+                                <li><strong>Avaliação:</strong> Para cada indivíduo, geramos sua curva e comparamos com a curva alvo, somando os erros.</li>
+                                <li><strong>Seleção dos Melhores:</strong> Ordenamos a população pelo erro e mantemos apenas os Top 5.</li>
+                                <li><strong>Reprodução:</strong> Preenchemos o resto da população (45 vagas) criando filhos a partir desses Top 5.
+                                    <ul>
+                                        <li>Escolhemos dois pais aleatoriamente (dentre os Top 5).</li>
+                                        <li>Criamos o filho: $Filho = \frac{Pai_1 + Pai_2}{2} + \text{Mutação}$.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Ciclo:</strong> Repetimos isso até o erro ser muito pequeno (menor que 0.5) ou o usuário parar.</li>
+                            </ol>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel explanation">
+                            <div class="controls">
+                                <button onclick="startGenetic()">Iniciar Evolução</button>
+                                <button onclick="stopGenetic()">Parar</button>
+                                <span id="genetic-gen">Geração: 0</span>
+                                <span id="genetic-error">Erro: -</span>
+                            </div>
+                            <div id="genetic-vis" class="visualization-area">
+                                <canvas id="genetic-canvas" width="600" height="400"></canvas>
+                            </div>
+                        </div>
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def run_genetic_algorithm():
+    pop = [Individual() for _ in range(SIZE)]
+    for gen in range(GENS):
+        pop.sort(key=lambda x: x.fitness)
+        new_pop = pop[:ELITISM]
+        while len(new_pop) < SIZE:
+            p1 = selection(pop); p2 = selection(pop)
+            child = crossover(p1, p2)
+            mutate(child)
+            new_pop.append(child)
+        pop = new_pop
+                            </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>População Inicial:</strong> Criamos `SIZE` indivíduos aleatórios. Cada um é uma solução candidata (um vetor de coeficientes).</li>
+                                    <li><strong>Ciclo Evolutivo:</strong> Repetimos por `GENS` gerações:
+                                        <ol>
+                                            <li><strong>Avaliação e Ordenação:</strong> Ordenamos a população pelo `fitness` (erro). Os melhores ficam no início da lista.</li>
+                                            <li><strong>Elitismo:</strong> Os melhores indivíduos (`ELITISM`) são copiados diretamente para a próxima geração. Isso garante que nunca perdemos a melhor solução encontrada.</li>
+                                            <li><strong>Reprodução:</strong> Preenchemos o resto da população criando filhos.
+                                                <ul>
+                                                    <li>`selection`: Escolhemos pais (geralmente por torneio).</li>
+                                                    <li>`crossover`: Combinamos os genes dos pais (média dos coeficientes).</li>
+                                                    <li>`mutate`: Adicionamos pequenas variações aleatórias para manter a diversidade.</li>
+                                                </ul>
+                                            </li>
+                                        </ol>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
