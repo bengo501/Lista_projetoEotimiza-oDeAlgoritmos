@@ -53,6 +53,14 @@
                         <li><strong>Restrições Explícitas:</strong> Definem o domínio das variáveis. Ex: $x_i \in \{1, ..., N\}$. Elas limitam o tamanho do espaço de busca inicial.</li>
                         <li><strong>Restrições Implícitas:</strong> Definem as regras que devem ser respeitadas entre as variáveis. Ex: "Nenhuma rainha pode atacar outra". São usadas pelas funções de verificação para decidir se um nó é promissor.</li>
                     </ul>
+
+                    <h3>Algoritmos e Problemas Conhecidos</h3>
+                    <ul>
+                        <li><strong>Sudoku:</strong> O exemplo clássico. Preenchemos células vazias e, se violarmos uma regra (número repetido), voltamos.</li>
+                        <li><strong>Coloração de Grafos (Graph Coloring):</strong> Colorir um mapa com N cores tal que nenhum vizinho tenha a mesma cor.</li>
+                        <li><strong>Problema do Labirinto (Rat in a Maze):</strong> Encontrar um caminho do início ao fim, voltando ao encontrar paredes.</li>
+                        <li><strong>Subconjunto de Soma (Subset Sum):</strong> Encontrar um subconjunto de números que soma um valor alvo.</li>
+                    </ul>
                 </div>
 
                 <hr class="divider">
@@ -327,6 +335,13 @@ def solve_knights_tour(n):
                         <li><strong>Alocação de Tarefas:</strong> Usamos a soma dos menores custos de cada linha para calcular o Limite Inferior.</li>
                         <li><strong>Jogo do 15 (Puzzle):</strong> Usamos o número de peças fora do lugar como heurística de custo.</li>
                     </ul>
+
+                    <h3>Algoritmos e Problemas Conhecidos</h3>
+                    <ul>
+                        <li><strong>Caixeiro Viajante (TSP):</strong> Encontrar a rota mais curta visitando todas as cidades. O Branch and Bound é uma das formas exatas mais eficientes para resolver instâncias médias de TSP.</li>
+                        <li><strong>Programação Inteira (Integer Programming):</strong> Resolver sistemas lineares onde as variáveis devem ser inteiras. O algoritmo de <em>Land and Doig</em> usa Branch and Bound.</li>
+                        <li><strong>Problema do Clique Máximo:</strong> Encontrar o maior subgrafo completo em um grafo.</li>
+                    </ul>
                 </div>
 
                 <hr class="divider">
@@ -573,6 +588,14 @@ def solve_assignment(cost_matrix):
                         "Esquemas curtos, de baixa ordem e de alta aptidão crescem exponencialmente na população."
                     </blockquote>
                     <p>O algoritmo funciona porque ele identifica e preserva esses pequenos "blocos de construção" (pedaços de solução que são bons) e os combina através do cruzamento para formar soluções cada vez mais complexas e próximas do ótimo global.</p>
+
+                    <h3>Algoritmos e Aplicações Conhecidas</h3>
+                    <ul>
+                        <li><strong>Otimização de Hiperparâmetros (AutoML):</strong> Encontrar a melhor configuração para redes neurais (learning rate, camadas, etc).</li>
+                        <li><strong>Design de Antenas da NASA:</strong> A antena da missão ST5 foi desenhada por um algoritmo evolutivo para ter o melhor padrão de radiação.</li>
+                        <li><strong>Evolução de Estratégias de Jogos:</strong> Treinar IAs para jogar Mario ou Starcraft evoluindo redes neurais (Neuroevolution).</li>
+                        <li><strong>Problemas de Escalonamento (Scheduling):</strong> Criar horários de aulas ou escalas de trabalho complexas.</li>
+                    </ul>
                 </div>
 
                 <hr class="divider">
@@ -859,6 +882,13 @@ def calculate_error(shapes, target):
                 <h2>6. Algoritmos Gulosos</h2>
                 <p>Algoritmos gulosos tomam a melhor decisão local em cada passo, na esperança de encontrar o ótimo global. Eles são rápidos e eficientes, mas nem sempre garantem a melhor solução para todos os problemas.</p>
 
+                <h3>Algoritmos e Problemas Conhecidos</h3>
+                <ul>
+                    <li><strong>Algoritmo de Dijkstra:</strong> Encontra o caminho mais curto em um grafo. A cada passo, escolhe o nó não visitado mais próximo.</li>
+                    <li><strong>Árvore Geradora Mínima (Prim e Kruskal):</strong> Conecta todos os pontos de uma rede com o menor custo de cabeamento possível.</li>
+                    <li><strong>Codificação de Huffman:</strong> Compressão de dados (ZIP, JPEG). Cria códigos binários menores para caracteres mais frequentes.</li>
+                </ul>
+
                 <!-- Ex 1: Troco -->
                 <div class="exercise-block">
                     <h4>1. Problema do Troco (Moedas de 17, 8, 1)</h4>
@@ -869,10 +899,27 @@ def calculate_error(shapes, target):
                         <div class="details-content">
                             <p><strong>Estratégia Gulosa:</strong></p>
                             <ul>
-                                <li>Sempre escolha a moeda de <strong>maior valor</strong> que é menor ou igual ao valor restante.</li>
-                                <li>Repita até que o valor restante seja 0.</li>
+                                <li>A ideia é simples: para minimizar o número de moedas, devemos usar o máximo possível de moedas de <strong>maior valor</strong>.</li>
+                                <li>Se precisamos dar 34 centavos, é melhor dar uma moeda de 17 do que 17 moedas de 1.</li>
                             </ul>
-                            <p><strong>Nota:</strong> Para este conjunto específico de moedas (17, 8, 1), essa estratégia funciona? Vamos testar!</p>
+                            <p><strong>Passo a Passo:</strong></p>
+                            <ol>
+                                <li>Começamos com o valor total do troco (ex: 34).</li>
+                                <li>Pegamos a maior moeda disponível (17). Ela cabe em 34? Sim.
+                                    <ul>
+                                        <li>Adicionamos 17 à solução.</li>
+                                        <li>Restante: 34 - 17 = 17.</li>
+                                    </ul>
+                                </li>
+                                <li>Tentamos a moeda 17 de novo. Cabe em 17? Sim.
+                                    <ul>
+                                        <li>Adicionamos 17 à solução.</li>
+                                        <li>Restante: 17 - 17 = 0.</li>
+                                    </ul>
+                                </li>
+                                <li>O restante é 0. Fim! Resultado: [17, 17].</li>
+                            </ol>
+                            <p><strong>Nota Importante:</strong> Essa estratégia funciona para sistemas de moedas "canônicos" (como 1, 5, 10, 25, 50, 100). Porém, para sistemas arbitrários (como 1, 3, 4), o guloso pode falhar! (Ex: Para 6, o guloso daria 4+1+1 (3 moedas), mas o ótimo é 3+3 (2 moedas)).</p>
                         </div>
                     </details>
 
@@ -895,6 +942,7 @@ def troco_guloso(valor, moedas):
     restante = valor
     
     # Moedas devem estar em ordem decrescente
+    # Ex: [17, 8, 1]
     for moeda in moedas:
         while restante >= moeda:
             resultado.append(moeda)
@@ -907,6 +955,18 @@ moedas = [17, 8, 1]
 print(troco_guloso(34, moedas))
 # Saída: [17, 17] (2 moedas)
                             </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>Loop das Moedas:</strong> Iteramos pelas moedas da maior para a menor. Isso é crucial para a estratégia gulosa.</li>
+                                    <li><strong>While:</strong> Enquanto a moeda atual "caber" no valor restante, continuamos usando ela.
+                                        <ul>
+                                            <li>Ex: Se restante é 50 e moeda é 17, usamos 17 (sobra 33), usamos 17 (sobra 16). Agora 17 não cabe mais, passamos para a próxima moeda (8).</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Complexidade:</strong> O(N), onde N é o número de moedas no resultado final. Muito rápido.</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -920,11 +980,13 @@ print(troco_guloso(34, moedas))
                         <summary>Estratégia e Passo a Passo</summary>
                         <div class="details-content">
                             <p><strong>Estratégia Gulosa (Earliest Finish Time):</strong></p>
+                            <p>A intuição é: "Quanto mais cedo eu terminar uma tarefa, mais tempo sobra para fazer outras".</p>
                             <ul>
-                                <li>Ordene todas as atividades pelo <strong>horário de término</strong> (da que termina mais cedo para a mais tarde).</li>
-                                <li>Selecione a primeira atividade da lista ordenada.</li>
-                                <li>Percorra a lista e selecione a próxima atividade que começa <strong>após</strong> o término da última selecionada.</li>
+                                <li><strong>Passo 1:</strong> Ordene todas as atividades pelo <strong>horário de término</strong> (da que termina mais cedo para a mais tarde).</li>
+                                <li><strong>Passo 2:</strong> Selecione a primeira atividade da lista ordenada (a que termina mais cedo de todas).</li>
+                                <li><strong>Passo 3:</strong> Percorra a lista e selecione a próxima atividade cujo <strong>início</strong> seja maior ou igual ao <strong>término</strong> da última atividade selecionada.</li>
                             </ul>
+                            <p>Essa estratégia é matematicamente provada para sempre encontrar o número máximo de atividades possível!</p>
                         </div>
                     </details>
 
@@ -943,19 +1005,30 @@ print(troco_guloso(34, moedas))
                             <pre><code>
 def algoritmo_termina_cedo(atividades):
     # Ordena por tempo de término (x[2])
+    # x[0]=id, x[1]=inicio, x[2]=fim
     atividades_ordenadas = sorted(atividades, key=lambda x: x[2])
     
     selecionadas = []
     ultimo_fim = 0
     
     for id_ativ, inicio, fim in atividades_ordenadas:
-        # Se começa depois que a última terminou
+        # Se a atividade começa depois (ou junto) 
+        # que a última terminou, ela é compatível.
         if inicio >= ultimo_fim:
             selecionadas.append((id_ativ, inicio, fim))
             ultimo_fim = fim
             
     return selecionadas
                             </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>Ordenação (`sorted`):</strong> O passo mais importante. Usamos `key=lambda x: x[2]` para ordenar pelo terceiro elemento da tupla (o tempo de fim).</li>
+                                    <li><strong>Iteração:</strong> Percorremos a lista ordenada uma única vez.</li>
+                                    <li><strong>Seleção:</strong> Mantemos a variável `ultimo_fim` para saber quando a sala ficará livre. Se a atividade atual começa após `ultimo_fim`, nós a pegamos e atualizamos o `ultimo_fim`.</li>
+                                    <li><strong>Complexidade:</strong> O(N log N) devido à ordenação. A seleção em si é O(N).</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -966,6 +1039,13 @@ def algoritmo_termina_cedo(atividades):
                 <h2>7. Divisão e Conquista</h2>
                 <p>A técnica de Divisão e Conquista quebra um problema grande em subproblemas menores, resolve-os recursivamente e combina as soluções. É a base de algoritmos eficientes como Merge Sort e Quick Sort.</p>
 
+                <h3>Algoritmos e Problemas Conhecidos</h3>
+                <ul>
+                    <li><strong>Quick Sort:</strong> Escolhe um pivô e particiona o array em menores e maiores que o pivô. Muito rápido na prática.</li>
+                    <li><strong>Algoritmo de Strassen:</strong> Multiplicação de matrizes mais rápida que o método tradicional O(N^3).</li>
+                    <li><strong>Transformada Rápida de Fourier (FFT):</strong> Fundamental para processamento de sinais e compressão de áudio/vídeo. Reduz complexidade de O(N^2) para O(N log N).</li>
+                </ul>
+
                 <!-- Ex 1: Pesquisa Binária -->
                 <div class="exercise-block">
                     <h4>1. Pesquisa Binária</h4>
@@ -975,12 +1055,20 @@ def algoritmo_termina_cedo(atividades):
                         <summary>Estratégia e Passo a Passo</summary>
                         <div class="details-content">
                             <p><strong>Estratégia:</strong></p>
-                            <ul>
-                                <li>Compare o alvo com o elemento do <strong>meio</strong>.</li>
-                                <li>Se for igual, achou!</li>
-                                <li>Se o alvo for menor, descarte a metade direita e busque na esquerda.</li>
-                                <li>Se o alvo for maior, descarte a metade esquerda e busque na direita.</li>
-                            </ul>
+                            <p>A cada passo, reduzimos o espaço de busca pela metade. Isso resulta em uma complexidade O(log N), que é extremamente rápida.</p>
+                            <p><strong>Passo a Passo:</strong></p>
+                            <ol>
+                                <li>Definimos o intervalo de busca: <code>inicio = 0</code>, <code>fim = tamanho - 1</code>.</li>
+                                <li>Calculamos o índice do <strong>meio</strong>: <code>(inicio + fim) // 2</code>.</li>
+                                <li>Comparamos o valor no <code>meio</code> com o <code>alvo</code>:
+                                    <ul>
+                                        <li><strong>Igual?</strong> Encontramos! Retorna o índice.</li>
+                                        <li><strong>Alvo menor?</strong> O alvo só pode estar na metade esquerda. Novo <code>fim = meio - 1</code>.</li>
+                                        <li><strong>Alvo maior?</strong> O alvo só pode estar na metade direita. Novo <code>inicio = meio + 1</code>.</li>
+                                    </ul>
+                                </li>
+                                <li>Repetimos até encontrar ou até <code>inicio > fim</code> (não encontrado).</li>
+                            </ol>
                         </div>
                     </details>
 
@@ -999,18 +1087,35 @@ def algoritmo_termina_cedo(atividades):
                             <h5>Código (Python)</h5>
                             <pre><code>
 def pesquisa_binaria(arr, alvo, inicio, fim):
+    # Caso Base: O intervalo cruzou, não achou.
     if inicio > fim:
         return -1
     
     meio = (inicio + fim) // 2
     
+    # Caso Base: Encontrou!
     if arr[meio] == alvo:
         return meio
+    # Divisão: Busca na esquerda
     elif alvo < arr[meio]:
         return pesquisa_binaria(arr, alvo, inicio, meio - 1)
+    # Divisão: Busca na direita
     else:
         return pesquisa_binaria(arr, alvo, meio + 1, fim)
                             </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>Recursão:</strong> A função chama a si mesma com um intervalo menor.</li>
+                                    <li><strong>Casos Base:</strong> São essenciais para parar a recursão.
+                                        <ol>
+                                            <li>Se <code>inicio > fim</code>, o elemento não existe.</li>
+                                            <li>Se <code>arr[meio] == alvo</code>, encontramos.</li>
+                                        </ol>
+                                    </li>
+                                    <li><strong>Eficiência:</strong> Em uma lista de 1 milhão de itens, a pesquisa binária encontra o alvo em no máximo 20 comparações!</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1025,10 +1130,11 @@ def pesquisa_binaria(arr, alvo, inicio, fim):
                         <div class="details-content">
                             <p><strong>Estratégia (Divisão e Conquista):</strong></p>
                             <ul>
-                                <li><strong>Divisão:</strong> Divida a lista ao meio recursivamente até ter listas de tamanho 1.</li>
-                                <li><strong>Conquista:</strong> Listas de tamanho 1 já estão ordenadas.</li>
-                                <li><strong>Combinação (Merge):</strong> Junte duas listas ordenadas em uma maior, intercalando os elementos na ordem certa.</li>
+                                <li><strong>Divisão:</strong> Divida a lista ao meio recursivamente até ter listas de tamanho 1. Uma lista com 1 elemento já está ordenada.</li>
+                                <li><strong>Conquista (Merge):</strong> Junte (intercale) duas listas ordenadas menores em uma lista ordenada maior.</li>
                             </ul>
+                            <p><strong>O Segredo do Merge:</strong></p>
+                            <p>Imagine duas pilhas de cartas ordenadas na mesa. Para criar uma única pilha ordenada, basta olhar para o topo de cada pilha, pegar a menor carta e colocar na nova pilha. Repita até acabar as cartas.</p>
                         </div>
                     </details>
 
@@ -1046,18 +1152,22 @@ def pesquisa_binaria(arr, alvo, inicio, fim):
                             <h5>Código (Python)</h5>
                             <pre><code>
 def mergesort(arr):
+    # Caso Base: Lista de 0 ou 1 elemento já está ordenada
     if len(arr) <= 1:
         return arr
         
+    # Divisão
     meio = len(arr) // 2
     esquerda = mergesort(arr[:meio])
     direita = mergesort(arr[meio:])
     
+    # Conquista (Combinação)
     return merge(esquerda, direita)
 
 def merge(esq, dir):
     resultado = []
     i = j = 0
+    # Intercalação
     while i < len(esq) and j < len(dir):
         if esq[i] < dir[j]:
             resultado.append(esq[i])
@@ -1065,10 +1175,19 @@ def merge(esq, dir):
         else:
             resultado.append(dir[j])
             j += 1
+    # Adiciona o que sobrou
     resultado.extend(esq[i:])
     resultado.extend(dir[j:])
     return resultado
                             </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>Função `mergesort`:</strong> É o "gerente". Ele divide o trabalho e delega para chamadas recursivas. Quando as chamadas retornam (com as metades ordenadas), ele chama o especialista `merge`.</li>
+                                    <li><strong>Função `merge`:</strong> É o "operário". Ele pega duas listas que ele <em>sabe</em> que estão ordenadas e as funde em uma só, linearmente O(N).</li>
+                                    <li><strong>Complexidade:</strong> O(N log N) sempre. É muito estável e previsível, diferente do Quick Sort que pode ser O(N^2) no pior caso.</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1090,6 +1209,13 @@ def merge(esq, dir):
                         <li><strong>Memoização (Top-Down):</strong> Começa do problema maior e salva os resultados conforme desce na recursão.</li>
                         <li><strong>Tabulação (Bottom-Up):</strong> Começa dos casos base e preenche uma tabela até chegar no problema maior. Geralmente mais eficiente em espaço.</li>
                     </ul>
+
+                    <h3>Algoritmos e Problemas Conhecidos</h3>
+                    <ul>
+                        <li><strong>Algoritmo de Floyd-Warshall:</strong> Encontra o caminho mais curto entre todos os pares de vértices em um grafo.</li>
+                        <li><strong>Maior Subsequência Comum (LCS):</strong> Usado em ferramentas de "diff" (como o Git) para comparar arquivos.</li>
+                        <li><strong>Edição de Distância (Levenshtein):</strong> Usado em corretores ortográficos para sugerir palavras próximas.</li>
+                    </ul>
                 </div>
 
                 <hr class="divider">
@@ -1106,11 +1232,22 @@ def merge(esq, dir):
                         <div class="details-content">
                             <p><strong>Estratégia (Otimização de Espaço):</strong></p>
                             <ul>
-                                <li>A abordagem recursiva ingênua tem complexidade O(2^n).</li>
-                                <li>Com PD (Tabulação), reduzimos para O(n).</li>
+                                <li>A abordagem recursiva ingênua tem complexidade O(2^n) (exponencial).</li>
+                                <li>Com PD (Tabulação), reduzimos para O(n) (linear).</li>
                                 <li>Podemos otimizar ainda mais o espaço: para calcular <code>f(n)</code>, precisamos apenas de <code>f(n-1)</code> e <code>f(n-2)</code>. Não precisamos guardar o array inteiro!</li>
-                                <li>Usamos apenas duas variáveis: <code>anterior</code> e <code>atual</code>.</li>
                             </ul>
+                            <p><strong>Passo a Passo:</strong></p>
+                            <ol>
+                                <li>Inicializamos <code>anterior = 0</code> (Fib 0) e <code>atual = 1</code> (Fib 1).</li>
+                                <li>Para cada passo de 2 até N:
+                                    <ul>
+                                        <li>Calculamos <code>proximo = anterior + atual</code>.</li>
+                                        <li>Atualizamos: o antigo <code>atual</code> vira o novo <code>anterior</code>.</li>
+                                        <li>Atualizamos: o <code>proximo</code> vira o novo <code>atual</code>.</li>
+                                    </ul>
+                                </li>
+                                <li>No final, <code>atual</code> contém a resposta.</li>
+                            </ol>
                         </div>
                     </details>
 
@@ -1137,11 +1274,20 @@ def fibonacci_o1_memoria(n):
     
     for i in range(2, n + 1):
         proximo = anterior + atual
+        # Desloca a janela
         anterior = atual
         atual = proximo
         
     return atual
                             </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>Complexidade de Tempo:</strong> O(N). Fazemos um loop simples.</li>
+                                    <li><strong>Complexidade de Espaço:</strong> O(1). Usamos apenas 3 variáveis inteiras, independente do tamanho de N. Isso é muito melhor que O(N) se N for gigante.</li>
+                                    <li><strong>A Janela Deslizante:</strong> A cada iteração, "esquecemos" o valor mais antigo que não é mais necessário.</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1155,17 +1301,22 @@ def fibonacci_o1_memoria(n):
                         <summary>Estratégia e Passo a Passo</summary>
                         <div class="details-content">
                             <p><strong>Estratégia (DP):</strong></p>
+                            <p>Vamos construir a solução pedra por pedra. Para cada posição <code>i</code>, queremos saber quantas calçadas válidas terminam com cada cor.</p>
                             <ul>
                                 <li>Definimos <code>dp[i][cor]</code> como o número de calçadas de tamanho <code>i</code> terminando na <code>cor</code>.</li>
-                                <li><strong>Transição:</strong>
+                                <li><strong>Transição (Regras):</strong>
                                     <ul>
-                                        <li>Verde (0) ou Azul (1) podem vir após qualquer cor.</li>
-                                        <li>Amarela (2) só pode vir após Verde ou Azul (não pode vir após Amarela).</li>
+                                        <li><strong>Verde (0):</strong> Pode vir depois de Verde, Azul ou Amarela. (Sem restrição).</li>
+                                        <li><strong>Azul (1):</strong> Pode vir depois de Verde, Azul ou Amarela. (Sem restrição).</li>
+                                        <li><strong>Amarela (2):</strong> SÓ pode vir depois de Verde ou Azul. (NÃO pode vir depois de Amarela).</li>
                                     </ul>
                                 </li>
+                            </ul>
+                            <p><strong>Fórmulas:</strong></p>
+                            <ul>
                                 <li><code>dp[i][0] = dp[i-1][0] + dp[i-1][1] + dp[i-1][2]</code></li>
                                 <li><code>dp[i][1] = dp[i-1][0] + dp[i-1][1] + dp[i-1][2]</code></li>
-                                <li><code>dp[i][2] = dp[i-1][0] + dp[i-1][1]</code> (Restrição!)</li>
+                                <li><code>dp[i][2] = dp[i-1][0] + dp[i-1][1]</code> (Aqui está a mágica!)</li>
                             </ul>
                         </div>
                     </details>
@@ -1186,9 +1337,11 @@ def fibonacci_o1_memoria(n):
                             <pre><code>
 def calcadas_sem_amarelas(n):
     # dp[i][0]=Verde, dp[i][1]=Azul, dp[i][2]=Amarela
+    # Criamos uma matriz (n+1) x 3
     dp = [[0]*3 for _ in range(n + 1)]
     
-    # Base: tamanho 1
+    # Base: Calçada de tamanho 1
+    # Podemos começar com qualquer cor
     dp[1][0] = 1; dp[1][1] = 1; dp[1][2] = 1
     
     for i in range(2, n + 1):
@@ -1199,7 +1352,18 @@ def calcadas_sem_amarelas(n):
         # Amarela não aceita Amarela anterior
         dp[i][2] = dp[i-1][0] + dp[i-1][1]
         
+    # O resultado é a soma de todas as terminações possíveis
     return sum(dp[n])
+                            </code></pre>
+                            <div class="code-explanation">
+                                <p><strong>Entendendo o Código:</strong></p>
+                                <ul>
+                                    <li><strong>Matriz DP:</strong> Usamos uma matriz para guardar os resultados intermediários. Cada linha <code>i</code> representa o tamanho da calçada.</li>
+                                    <li><strong>Loop Principal:</strong> Preenchemos a tabela do tamanho 2 até N baseando-se sempre na linha anterior (<code>i-1</code>).</li>
+                                    <li><strong>Resultado Final:</strong> A resposta não é um único valor da tabela, mas a soma da última linha, pois a calçada pode terminar com qualquer uma das 3 cores (desde que válida).</li>
+                                </ul>
+                            </div>
+                        </div>
                             </code></pre>
                         </div>
                     </div>
