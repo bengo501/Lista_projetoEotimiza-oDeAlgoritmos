@@ -18,6 +18,9 @@
             <button class="tab-btn active" onclick="openTab('backtracking')">Backtracking</button>
             <button class="tab-btn" onclick="openTab('branchbound')">Branch & Bound</button>
             <button class="tab-btn" onclick="openTab('genetic')">Algoritmos Genéticos</button>
+            <button class="tab-btn" onclick="openTab('greedy')">Algoritmos Gulosos</button>
+            <button class="tab-btn" onclick="openTab('divide-conquer')">Divisão e Conquista</button>
+            <button class="tab-btn" onclick="openTab('dynamic-programming')">Programação Dinâmica</button>
         </nav>
 
         <main>
@@ -846,6 +849,358 @@ def calculate_error(shapes, target):
                                     <li><strong>Custo Computacional:</strong> A função `calculate_error` é pesada pois precisa ler todos os pixels. Por isso usamos imagens pequenas na visualização.</li>
                                 </ul>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 6: ALGORITMOS GULOSOS -->
+            <section id="greedy" class="tab-content">
+                <h2>6. Algoritmos Gulosos</h2>
+                <p>Algoritmos gulosos tomam a melhor decisão local em cada passo, na esperança de encontrar o ótimo global. Eles são rápidos e eficientes, mas nem sempre garantem a melhor solução para todos os problemas.</p>
+
+                <!-- Ex 1: Troco -->
+                <div class="exercise-block">
+                    <h4>1. Problema do Troco (Moedas de 17, 8, 1)</h4>
+                    <p><strong>Problema:</strong> Dar o troco para um valor N usando o menor número possível de moedas. As moedas disponíveis valem 17, 8 e 1 centavos.</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>Estratégia Gulosa:</strong></p>
+                            <ul>
+                                <li>Sempre escolha a moeda de <strong>maior valor</strong> que é menor ou igual ao valor restante.</li>
+                                <li>Repita até que o valor restante seja 0.</li>
+                            </ul>
+                            <p><strong>Nota:</strong> Para este conjunto específico de moedas (17, 8, 1), essa estratégia funciona? Vamos testar!</p>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel explanation">
+                            <div class="controls">
+                                <label>Valor do Troco: <input type="number" id="coin-amount" value="34" min="1" max="100" style="width: 60px;"></label>
+                                <button onclick="solveCoins()">Calcular Troco</button>
+                            </div>
+                            <div id="coin-vis" class="visualization-area" style="flex-direction: column; align-items: flex-start; padding: 20px;">
+                                <div id="coin-result" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+                                <div id="coin-stats" style="margin-top: 15px; color: #cdd6f4;"></div>
+                            </div>
+                        </div>
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def troco_guloso(valor, moedas):
+    resultado = []
+    restante = valor
+    
+    # Moedas devem estar em ordem decrescente
+    for moeda in moedas:
+        while restante >= moeda:
+            resultado.append(moeda)
+            restante -= moeda
+            
+    return resultado
+
+# Exemplo de uso
+moedas = [17, 8, 1]
+print(troco_guloso(34, moedas))
+# Saída: [17, 17] (2 moedas)
+                            </code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ex 2: Seleção de Atividades -->
+                <div class="exercise-block">
+                    <h4>2. Seleção de Atividades</h4>
+                    <p><strong>Problema:</strong> Escolher o máximo de atividades que podem ser realizadas sem conflito de horário (uma de cada vez).</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>Estratégia Gulosa (Earliest Finish Time):</strong></p>
+                            <ul>
+                                <li>Ordene todas as atividades pelo <strong>horário de término</strong> (da que termina mais cedo para a mais tarde).</li>
+                                <li>Selecione a primeira atividade da lista ordenada.</li>
+                                <li>Percorra a lista e selecione a próxima atividade que começa <strong>após</strong> o término da última selecionada.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel explanation">
+                            <div class="controls">
+                                <button onclick="solveActivities()">Selecionar Atividades</button>
+                                <button onclick="resetActivities()">Resetar</button>
+                            </div>
+                            <div id="activity-vis" class="visualization-area" style="flex-direction: column; padding: 20px;">
+                                <!-- Timeline visualization will be drawn here -->
+                            </div>
+                        </div>
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def algoritmo_termina_cedo(atividades):
+    # Ordena por tempo de término (x[2])
+    atividades_ordenadas = sorted(atividades, key=lambda x: x[2])
+    
+    selecionadas = []
+    ultimo_fim = 0
+    
+    for id_ativ, inicio, fim in atividades_ordenadas:
+        # Se começa depois que a última terminou
+        if inicio >= ultimo_fim:
+            selecionadas.append((id_ativ, inicio, fim))
+            ultimo_fim = fim
+            
+    return selecionadas
+                            </code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 7: DIVISÃO E CONQUISTA -->
+            <section id="divide-conquer" class="tab-content">
+                <h2>7. Divisão e Conquista</h2>
+                <p>A técnica de Divisão e Conquista quebra um problema grande em subproblemas menores, resolve-os recursivamente e combina as soluções. É a base de algoritmos eficientes como Merge Sort e Quick Sort.</p>
+
+                <!-- Ex 1: Pesquisa Binária -->
+                <div class="exercise-block">
+                    <h4>1. Pesquisa Binária</h4>
+                    <p><strong>Problema:</strong> Encontrar um número em uma lista ordenada de forma eficiente.</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>Estratégia:</strong></p>
+                            <ul>
+                                <li>Compare o alvo com o elemento do <strong>meio</strong>.</li>
+                                <li>Se for igual, achou!</li>
+                                <li>Se o alvo for menor, descarte a metade direita e busque na esquerda.</li>
+                                <li>Se o alvo for maior, descarte a metade esquerda e busque na direita.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel explanation">
+                            <div class="controls">
+                                <label>Buscar Número (0-19): <input type="number" id="binary-target" value="13" min="0" max="19" style="width: 60px;"></label>
+                                <button onclick="startBinarySearch()">Buscar</button>
+                            </div>
+                            <div id="binary-vis" class="visualization-area" style="flex-direction: column; padding: 20px;">
+                                <!-- Array visualization -->
+                            </div>
+                            <div id="binary-status" style="margin-top: 10px; color: #cdd6f4; font-family: monospace;"></div>
+                        </div>
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def pesquisa_binaria(arr, alvo, inicio, fim):
+    if inicio > fim:
+        return -1
+    
+    meio = (inicio + fim) // 2
+    
+    if arr[meio] == alvo:
+        return meio
+    elif alvo < arr[meio]:
+        return pesquisa_binaria(arr, alvo, inicio, meio - 1)
+    else:
+        return pesquisa_binaria(arr, alvo, meio + 1, fim)
+                            </code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ex 2: Merge Sort -->
+                <div class="exercise-block">
+                    <h4>2. Merge Sort</h4>
+                    <p><strong>Problema:</strong> Ordenar uma lista de números.</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>Estratégia (Divisão e Conquista):</strong></p>
+                            <ul>
+                                <li><strong>Divisão:</strong> Divida a lista ao meio recursivamente até ter listas de tamanho 1.</li>
+                                <li><strong>Conquista:</strong> Listas de tamanho 1 já estão ordenadas.</li>
+                                <li><strong>Combinação (Merge):</strong> Junte duas listas ordenadas em uma maior, intercalando os elementos na ordem certa.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel explanation">
+                            <div class="controls">
+                                <button onclick="startMergeSort()">Ordenar (Merge Sort)</button>
+                                <button onclick="resetMergeSort()">Resetar</button>
+                            </div>
+                            <div id="merge-vis" class="visualization-area" style="flex-direction: column; padding: 20px; align-items: center;">
+                                <!-- Merge Sort visualization -->
+                            </div>
+                        </div>
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def mergesort(arr):
+    if len(arr) <= 1:
+        return arr
+        
+    meio = len(arr) // 2
+    esquerda = mergesort(arr[:meio])
+    direita = mergesort(arr[meio:])
+    
+    return merge(esquerda, direita)
+
+def merge(esq, dir):
+    resultado = []
+    i = j = 0
+    while i < len(esq) and j < len(dir):
+        if esq[i] < dir[j]:
+            resultado.append(esq[i])
+            i += 1
+        else:
+            resultado.append(dir[j])
+            j += 1
+    resultado.extend(esq[i:])
+    resultado.extend(dir[j:])
+    return resultado
+                            </code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 8: PROGRAMAÇÃO DINÂMICA -->
+            <section id="dynamic-programming" class="tab-content">
+                <div class="theory-section">
+                    <h2>Teoria: Programação Dinâmica</h2>
+                    <p>A Programação Dinâmica (PD) é uma técnica poderosa para resolver problemas complexos que podem ser quebrados em <strong>subproblemas sobrepostos</strong>. Diferente da Divisão e Conquista, onde os subproblemas são independentes, na PD os subproblemas se repetem várias vezes.</p>
+                    
+                    <h3>A Mentalidade da Otimização</h3>
+                    <p>A ideia central é: <em>"Quem não lembra do passado está condenado a repeti-lo"</em>. A PD armazena os resultados dos subproblemas já resolvidos para evitar recálculos desnecessários.</p>
+
+                    <h3>Conceitos Chave</h3>
+                    <ul>
+                        <li><strong>Subestrutura Ótima:</strong> A solução ótima do problema original pode ser construída a partir das soluções ótimas dos seus subproblemas.</li>
+                        <li><strong>Subproblemas Sobrepostos:</strong> O mesmo subproblema é resolvido múltiplas vezes. Ex: Fibonacci(5) precisa de Fibonacci(3), e Fibonacci(4) também precisa de Fibonacci(3).</li>
+                        <li><strong>Memoização (Top-Down):</strong> Começa do problema maior e salva os resultados conforme desce na recursão.</li>
+                        <li><strong>Tabulação (Bottom-Up):</strong> Começa dos casos base e preenche uma tabela até chegar no problema maior. Geralmente mais eficiente em espaço.</li>
+                    </ul>
+                </div>
+
+                <hr class="divider">
+
+                <h3>Exercícios</h3>
+
+                <!-- Ex 1: Fibonacci -->
+                <div class="exercise-block">
+                    <h4>1. Fibonacci (Otimizado)</h4>
+                    <p><strong>Problema:</strong> Calcular o N-ésimo termo da sequência de Fibonacci (0, 1, 1, 2, 3, 5, 8...).</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>Estratégia (Otimização de Espaço):</strong></p>
+                            <ul>
+                                <li>A abordagem recursiva ingênua tem complexidade O(2^n).</li>
+                                <li>Com PD (Tabulação), reduzimos para O(n).</li>
+                                <li>Podemos otimizar ainda mais o espaço: para calcular <code>f(n)</code>, precisamos apenas de <code>f(n-1)</code> e <code>f(n-2)</code>. Não precisamos guardar o array inteiro!</li>
+                                <li>Usamos apenas duas variáveis: <code>anterior</code> e <code>atual</code>.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel explanation">
+                            <div class="controls">
+                                <label>N: <input type="number" id="fib-n" value="10" min="0" max="50" style="width: 60px;"></label>
+                                <button onclick="calculateFibonacci()">Calcular</button>
+                            </div>
+                            <div id="fib-vis" class="visualization-area" style="flex-direction: column; padding: 20px; align-items: center;">
+                                <div id="fib-result" style="font-size: 24px; font-weight: bold; color: #a6e3a1; margin-bottom: 10px;"></div>
+                                <div id="fib-steps" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;"></div>
+                            </div>
+                        </div>
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def fibonacci_o1_memoria(n):
+    if n <= 0: return 0
+    if n == 1: return 1
+    
+    anterior = 0
+    atual = 1
+    
+    for i in range(2, n + 1):
+        proximo = anterior + atual
+        anterior = atual
+        atual = proximo
+        
+    return atual
+                            </code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ex 2: Calçadas -->
+                <div class="exercise-block">
+                    <h4>2. Calçadas Coloridas</h4>
+                    <p><strong>Problema:</strong> Construir uma calçada de comprimento N usando pedras Verdes, Azuis e Amarelas, mas <strong>sem duas pedras Amarelas consecutivas</strong>.</p>
+                    
+                    <details class="strategy-details">
+                        <summary>Estratégia e Passo a Passo</summary>
+                        <div class="details-content">
+                            <p><strong>Estratégia (DP):</strong></p>
+                            <ul>
+                                <li>Definimos <code>dp[i][cor]</code> como o número de calçadas de tamanho <code>i</code> terminando na <code>cor</code>.</li>
+                                <li><strong>Transição:</strong>
+                                    <ul>
+                                        <li>Verde (0) ou Azul (1) podem vir após qualquer cor.</li>
+                                        <li>Amarela (2) só pode vir após Verde ou Azul (não pode vir após Amarela).</li>
+                                    </ul>
+                                </li>
+                                <li><code>dp[i][0] = dp[i-1][0] + dp[i-1][1] + dp[i-1][2]</code></li>
+                                <li><code>dp[i][1] = dp[i-1][0] + dp[i-1][1] + dp[i-1][2]</code></li>
+                                <li><code>dp[i][2] = dp[i-1][0] + dp[i-1][1]</code> (Restrição!)</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <div class="content-grid">
+                        <div class="panel explanation">
+                            <div class="controls">
+                                <label>Tamanho N: <input type="number" id="walk-n" value="5" min="1" max="20" style="width: 60px;"></label>
+                                <button onclick="calculateWalkways()">Calcular Combinações</button>
+                            </div>
+                            <div id="walk-vis" class="visualization-area" style="flex-direction: column; padding: 20px;">
+                                <div id="walk-result" style="margin-bottom: 15px; color: #cdd6f4;"></div>
+                                <div id="walk-table" style="font-family: monospace; font-size: 12px; color: #a6adc8;"></div>
+                            </div>
+                        </div>
+                        <div class="panel code">
+                            <h5>Código (Python)</h5>
+                            <pre><code>
+def calcadas_sem_amarelas(n):
+    # dp[i][0]=Verde, dp[i][1]=Azul, dp[i][2]=Amarela
+    dp = [[0]*3 for _ in range(n + 1)]
+    
+    # Base: tamanho 1
+    dp[1][0] = 1; dp[1][1] = 1; dp[1][2] = 1
+    
+    for i in range(2, n + 1):
+        # Verde e Azul aceitam qualquer anterior
+        dp[i][0] = dp[i-1][0] + dp[i-1][1] + dp[i-1][2]
+        dp[i][1] = dp[i-1][0] + dp[i-1][1] + dp[i-1][2]
+        
+        # Amarela não aceita Amarela anterior
+        dp[i][2] = dp[i-1][0] + dp[i-1][1]
+        
+    return sum(dp[n])
+                            </code></pre>
                         </div>
                     </div>
                 </div>

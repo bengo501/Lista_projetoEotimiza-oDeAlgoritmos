@@ -1131,3 +1131,409 @@ setTimeout(() => {
         drawTargetImage();
     }
 }, 500);
+
+// --- GREEDY ALGORITHMS ---
+
+// 1. Coin Change
+function solveCoins() {
+    const amountInput = document.getElementById('coin-amount');
+    const amount = parseInt(amountInput.value);
+    const coins = [17, 8, 1];
+    const result = [];
+    let remaining = amount;
+    
+    const resultDiv = document.getElementById('coin-result');
+    const statsDiv = document.getElementById('coin-stats');
+    resultDiv.innerHTML = '';
+    
+    for (let coin of coins) {
+        while (remaining >= coin) {
+            result.push(coin);
+            remaining -= coin;
+            
+            // Visual coin
+            const coinEl = document.createElement('div');
+            coinEl.className = 'coin-visual';
+            coinEl.style.cssText = `
+                width: 40px; height: 40px; border-radius: 50%;
+                background: #f9e2af; color: #1e1e2e;
+                display: flex; align-items: center; justify-content: center;
+                font-weight: bold; border: 2px solid #fab387;
+                box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            `;
+            coinEl.textContent = coin;
+            resultDiv.appendChild(coinEl);
+        }
+    }
+    
+    statsDiv.innerHTML = `Total de moedas: <strong>${result.length}</strong> (Soma: ${amount})`;
+}
+
+// 2. Activity Selection
+const activitiesData = [
+    {id: 1, start: 2, end: 4},
+    {id: 2, start: 1, end: 4},
+    {id: 3, start: 2, end: 7},
+    {id: 4, start: 4, end: 8},
+    {id: 5, start: 4, end: 9},
+    {id: 6, start: 6, end: 8},
+    {id: 7, start: 5, end: 10},
+    {id: 8, start: 7, end: 9},
+    {id: 9, start: 7, end: 10},
+    {id: 10, start: 8, end: 11}
+];
+
+function resetActivities() {
+    renderActivities([]);
+}
+
+function solveActivities() {
+    // Greedy Strategy: Sort by finish time
+    const sortedActivities = [...activitiesData].sort((a, b) => a.end - b.end);
+    
+    const selected = [];
+    let lastFinish = 0;
+    
+    for (let act of sortedActivities) {
+        if (act.start >= lastFinish) {
+            selected.push(act);
+            lastFinish = act.end;
+        }
+    }
+    
+    renderActivities(selected);
+}
+
+function renderActivities(selected) {
+    const container = document.getElementById('activity-vis');
+    container.innerHTML = '';
+    
+    const selectedIds = new Set(selected.map(a => a.id));
+    
+    // Time scale
+    const scaleDiv = document.createElement('div');
+    scaleDiv.style.cssText = 'display: flex; margin-left: 40px; margin-bottom: 10px; color: #a6adc8; font-size: 12px;';
+    for(let i=0; i<=12; i++) {
+        const tick = document.createElement('div');
+        tick.style.width = '30px';
+        tick.textContent = i;
+        scaleDiv.appendChild(tick);
+    }
+    container.appendChild(scaleDiv);
+    
+    // Activities rows
+    activitiesData.forEach(act => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display: flex; align-items: center; margin-bottom: 5px; height: 25px;';
+        
+        // ID Label
+        const label = document.createElement('div');
+        label.style.cssText = 'width: 40px; text-align: right; margin-right: 10px; font-size: 12px; color: #cdd6f4;';
+        label.textContent = `Ativ ${act.id}`;
+        row.appendChild(label);
+        
+        // Bar container
+        const barContainer = document.createElement('div');
+        barContainer.style.cssText = 'position: relative; flex-grow: 1; height: 100%; background: rgba(255,255,255,0.05); border-radius: 4px;';
+        
+        // Activity Bar
+        const bar = document.createElement('div');
+        const isSelected = selectedIds.has(act.id);
+        const width = (act.end - act.start) * 30;
+        const left = act.start * 30;
+        
+        bar.style.cssText = `
+            position: absolute;
+            left: ${left}px;
+            width: ${width}px;
+            height: 100%;
+            background-color: ${isSelected ? '#a6e3a1' : '#45475a'};
+            border: 1px solid ${isSelected ? '#94e2d5' : '#585b70'};
+            border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; color: ${isSelected ? '#1e1e2e' : '#cdd6f4'};
+            transition: all 0.3s ease;
+        `;
+        bar.textContent = `${act.start}-${act.end}`;
+        
+        barContainer.appendChild(bar);
+        row.appendChild(barContainer);
+        container.appendChild(row);
+    });
+    
+    if (selected.length > 0) {
+        const summary = document.createElement('div');
+        summary.style.cssText = 'margin-top: 15px; color: #a6e3a1; font-weight: bold;';
+        summary.textContent = `Atividades Selecionadas: ${selected.length} (IDs: ${selected.map(a => a.id).join(', ')})`;
+        container.appendChild(summary);
+    }
+}
+
+// --- DIVIDE AND CONQUER ---
+
+// 1. Binary Search
+async function startBinarySearch() {
+    const targetInput = document.getElementById('binary-target');
+    const target = parseInt(targetInput.value);
+    const container = document.getElementById('binary-vis');
+    const statusDiv = document.getElementById('binary-status');
+    
+    // Create sorted array 0-19
+    const arr = Array.from({length: 20}, (_, i) => i);
+    
+    // Render initial state
+    container.innerHTML = '';
+    const arrayDiv = document.createElement('div');
+    arrayDiv.style.cssText = 'display: flex; gap: 5px; flex-wrap: wrap; justify-content: center;';
+    
+    const elements = [];
+    for(let num of arr) {
+        const el = document.createElement('div');
+        el.style.cssText = `
+            width: 30px; height: 30px; border: 1px solid #585b70;
+            display: flex; align-items: center; justify-content: center;
+            color: #cdd6f4; font-size: 12px; border-radius: 4px;
+            transition: all 0.3s ease;
+        `;
+        el.textContent = num;
+        arrayDiv.appendChild(el);
+        elements.push(el);
+    }
+    container.appendChild(arrayDiv);
+    
+    // Binary Search Algorithm
+    let start = 0;
+    let end = arr.length - 1;
+    
+    while (start <= end) {
+        // Reset styles
+        elements.forEach((el, i) => {
+            if (i < start || i > end) el.style.opacity = '0.2';
+            else el.style.opacity = '1';
+            el.style.background = 'transparent';
+        });
+        
+        const mid = Math.floor((start + end) / 2);
+        
+        // Highlight mid
+        elements[mid].style.background = '#f9e2af'; // Yellow
+        elements[mid].style.color = '#1e1e2e';
+        statusDiv.textContent = `Buscando em [${start}, ${end}]. Meio: ${mid} (Valor: ${arr[mid]})`;
+        
+        await new Promise(r => setTimeout(r, 1000));
+        
+        if (arr[mid] === target) {
+            elements[mid].style.background = '#a6e3a1'; // Green
+            statusDiv.textContent = `Encontrado no índice ${mid}!`;
+            return;
+        } else if (arr[mid] < target) {
+            start = mid + 1;
+        } else {
+            end = mid - 1;
+        }
+    }
+    
+    statusDiv.textContent = "Não encontrado.";
+}
+
+// 2. Merge Sort
+let mergeArr = [10, 5, 2, 8, 7, 1, 6, 3, 9, 4];
+let mergeContainer = null;
+
+function resetMergeSort() {
+    mergeArr = [10, 5, 2, 8, 7, 1, 6, 3, 9, 4];
+    renderMergeSort(mergeArr);
+}
+
+function renderMergeSort(arr, highlightIndices = []) {
+    const container = document.getElementById('merge-vis');
+    container.innerHTML = '';
+    
+    const arrayDiv = document.createElement('div');
+    arrayDiv.style.cssText = 'display: flex; gap: 5px; align-items: flex-end; height: 150px;';
+    
+    arr.forEach((val, idx) => {
+        const bar = document.createElement('div');
+        const height = val * 14;
+        const isHighlight = highlightIndices.includes(idx);
+        
+        bar.style.cssText = `
+            width: 25px; height: ${height}px;
+            background: ${isHighlight ? '#fab387' : '#89b4fa'};
+            border-radius: 4px 4px 0 0;
+            display: flex; align-items: flex-end; justify-content: center;
+            padding-bottom: 5px; font-size: 10px; color: #1e1e2e; font-weight: bold;
+            transition: all 0.2s ease;
+        `;
+        bar.textContent = val;
+        arrayDiv.appendChild(bar);
+    });
+    container.appendChild(arrayDiv);
+}
+
+async function startMergeSort() {
+    await mergeSortRecursive(mergeArr, 0, mergeArr.length - 1);
+    renderMergeSort(mergeArr); // Final render
+}
+
+async function mergeSortRecursive(arr, left, right) {
+    if (left >= right) return;
+    
+    const mid = Math.floor((left + right) / 2);
+    
+    await mergeSortRecursive(arr, left, mid);
+    await mergeSortRecursive(arr, mid + 1, right);
+    await merge(arr, left, mid, right);
+}
+
+async function merge(arr, left, mid, right) {
+    const n1 = mid - left + 1;
+    const n2 = right - mid;
+    
+    const L = new Array(n1);
+    const R = new Array(n2);
+    
+    for (let i = 0; i < n1; i++) L[i] = arr[left + i];
+    for (let j = 0; j < n2; j++) R[j] = arr[mid + 1 + j];
+    
+    let i = 0, j = 0, k = left;
+    
+    while (i < n1 && j < n2) {
+        // Visualize comparison
+        renderMergeSort(arr, [left + i, mid + 1 + j]);
+        await new Promise(r => setTimeout(r, 300));
+        
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+        renderMergeSort(arr, [k-1]); // Show update
+    }
+    
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+        renderMergeSort(arr, [k-1]);
+        await new Promise(r => setTimeout(r, 100));
+    }
+    
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+        renderMergeSort(arr, [k-1]);
+        await new Promise(r => setTimeout(r, 100));
+    }
+}
+
+// Initialize Merge Sort on load
+setTimeout(() => {
+    resetMergeSort();
+}, 600);
+
+
+// --- DYNAMIC PROGRAMMING ---
+
+// 1. Fibonacci
+async function calculateFibonacci() {
+    const nInput = document.getElementById('fib-n');
+    const n = parseInt(nInput.value);
+    const resultDiv = document.getElementById('fib-result');
+    const stepsDiv = document.getElementById('fib-steps');
+    
+    stepsDiv.innerHTML = '';
+    resultDiv.textContent = 'Calculando...';
+    
+    if (n < 0) return;
+    
+    // Visualizing O(1) space approach
+    let prev = 0;
+    let curr = 1;
+    
+    // Step 0
+    addFibStep(stepsDiv, 0, 0);
+    await new Promise(r => setTimeout(r, 200));
+    
+    if (n > 0) {
+        addFibStep(stepsDiv, 1, 1);
+        await new Promise(r => setTimeout(r, 200));
+    }
+    
+    for (let i = 2; i <= n; i++) {
+        const next = prev + curr;
+        prev = curr;
+        curr = next;
+        
+        addFibStep(stepsDiv, i, curr);
+        await new Promise(r => setTimeout(r, 100)); // Fast animation
+    }
+    
+    resultDiv.innerHTML = `Fibonacci(${n}) = <span style="color: #f9e2af">${n === 0 ? 0 : curr}</span>`;
+}
+
+function addFibStep(container, i, val) {
+    const step = document.createElement('div');
+    step.style.cssText = `
+        padding: 5px 10px; border: 1px solid #585b70; border-radius: 4px;
+        background: rgba(255,255,255,0.05); color: #cdd6f4; font-size: 12px;
+        min-width: 60px; text-align: center;
+    `;
+    step.innerHTML = `f(${i})<br><strong style="color: #89b4fa">${val}</strong>`;
+    container.appendChild(step);
+    
+    // Auto scroll
+    container.scrollTop = container.scrollHeight;
+}
+
+// 2. Walkways (Calcadas)
+function calculateWalkways() {
+    const nInput = document.getElementById('walk-n');
+    const n = parseInt(nInput.value);
+    const resultDiv = document.getElementById('walk-result');
+    const tableDiv = document.getElementById('walk-table');
+    
+    if (n < 1) return;
+    
+    // DP Table
+    // dp[i][0] = Green, dp[i][1] = Blue, dp[i][2] = Yellow
+    const dp = Array(n + 1).fill().map(() => [0, 0, 0]);
+    
+    // Base case
+    dp[1][0] = 1;
+    dp[1][1] = 1;
+    dp[1][2] = 1;
+    
+    let tableHtml = '<table style="width: 100%; border-collapse: collapse; text-align: center;">';
+    tableHtml += '<tr><th style="border-bottom: 1px solid #585b70; padding: 5px;">Tam</th><th style="border-bottom: 1px solid #585b70; color: #a6e3a1;">Verde</th><th style="border-bottom: 1px solid #585b70; color: #89b4fa;">Azul</th><th style="border-bottom: 1px solid #585b70; color: #f9e2af;">Amarela</th><th style="border-bottom: 1px solid #585b70;">Total</th></tr>';
+    
+    // Row 1
+    tableHtml += `<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>3</td></tr>`;
+    
+    for (let i = 2; i <= n; i++) {
+        // Transitions
+        dp[i][0] = dp[i-1][0] + dp[i-1][1] + dp[i-1][2]; // Green after any
+        dp[i][1] = dp[i-1][0] + dp[i-1][1] + dp[i-1][2]; // Blue after any
+        dp[i][2] = dp[i-1][0] + dp[i-1][1];             // Yellow NOT after Yellow
+        
+        const total = dp[i][0] + dp[i][1] + dp[i][2];
+        
+        tableHtml += `<tr>
+            <td style="padding: 3px;">${i}</td>
+            <td style="color: #a6e3a1;">${dp[i][0]}</td>
+            <td style="color: #89b4fa;">${dp[i][1]}</td>
+            <td style="color: #f9e2af;">${dp[i][2]}</td>
+            <td><strong>${total}</strong></td>
+        </tr>`;
+    }
+    
+    tableHtml += '</table>';
+    tableDiv.innerHTML = tableHtml;
+    
+    const total = dp[n][0] + dp[n][1] + dp[n][2];
+    resultDiv.innerHTML = `Total de calçadas válidas de tamanho ${n}: <strong style="font-size: 18px; color: #cba6f7;">${total}</strong>`;
+}
